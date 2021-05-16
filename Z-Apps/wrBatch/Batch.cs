@@ -4,50 +4,61 @@ using Z_Apps.Models;
 using Z_Apps.Models.SystemBase;
 using Z_Apps.Util;
 
-namespace Z_Apps.wrBatch {
+namespace Z_Apps.wrBatch
+{
 
-    public class Batch {
+    public class Batch
+    {
 
-        public static async void runAsync() {
+        public static async void runAsync()
+        {
 
             await Task.Delay(1000 * 60 * 60 * 5);//デプロイ後５時間待機
 
-            while (true) {
-                try {
+            while (true)
+            {
+                try
+                {
 
-                    var t = Task.Run(() => {
-                        MakeDbBackupAsync();
-                        DeleteOpeLogs();
+                    var t = Task.Run(() =>
+                    {
+                        // MakeDbBackupAsync();
+                        // DeleteOpeLogs();
                         ApiCache.DeleteOldCache();
                     });
 
                     await Task.Delay(1000 * 60 * 60 * 24);//１日待機
 
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     ErrorLog.InsertErrorLog(ex.Message);
                 }
             }
         }
 
-        private static async void MakeDbBackupAsync() {
-            var con = new DBCon();
-            var logService = new ClientLogService(con);
+        // private static async void MakeDbBackupAsync()
+        // {
+        //     var con = new DBCon();
+        //     var logService = new ClientLogService(con);
 
-            var storageBkService = new StorageBackupService(con);
-            await storageBkService.MakeBackup();
+        //     var storageBkService = new StorageBackupService(con);
+        //     await storageBkService.MakeBackup();
 
-            logService.RegisterLog(new ClientOpeLog() {
-                url = "wrBatch",
-                operationName = "finish to make DB backup",
-                userId = "wrBatch"
-            });
-        }
+        //     logService.RegisterLog(new ClientOpeLog()
+        //     {
+        //         url = "wrBatch",
+        //         operationName = "finish to make DB backup",
+        //         userId = "wrBatch"
+        //     });
+        // }
 
-        private static void DeleteOpeLogs() {
-            var con = new DBCon();
-            var service = new ClientOpeLogManager(con);
-            service.DeleteOldLogs();
-            service.DeleteAdminLogs();
-        }
+        // private static void DeleteOpeLogs()
+        // {
+        //     var con = new DBCon();
+        //     var service = new ClientOpeLogManager(con);
+        //     service.DeleteOldLogs();
+        //     service.DeleteAdminLogs();
+        // }
     }
 }
