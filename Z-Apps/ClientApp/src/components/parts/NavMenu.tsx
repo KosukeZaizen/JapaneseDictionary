@@ -11,11 +11,11 @@ import "./NavMenu.css";
 
 function NavigationItems(props: { closeToggle: () => void }) {
     let objLinks = {
-        "Japanese Folktales": "/folktales",
-        "Hiragana / Katakana": "/hiragana-katakana",
-        Vocabulary: "/vocabulary-list",
-        Articles: "/articles",
-        "Action Games": "/ninja",
+        // "Japanese Folktales": "/folktales",
+        // "Hiragana / Katakana": "/hiragana-katakana",
+        // Vocabulary: "/vocabulary-list",
+        // Articles: "/articles",
+        // "Action Games": "/ninja",
     } as const;
     let linkList = [];
     for (let key in objLinks) {

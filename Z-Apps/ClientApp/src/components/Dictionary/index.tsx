@@ -239,12 +239,7 @@ class Dictionary extends React.Component<Props, State> {
 
         return (
             <div className="center">
-                <Head
-                    title={title}
-                    desc={snippet}
-                    // noindex={noindex}
-                    noindex
-                />
+                <Head title={title} desc={snippet} noindex={noindex} />
                 <div style={{ maxWidth: 900 }}>
                     <div
                         className="breadcrumbs"
@@ -275,26 +270,6 @@ class Dictionary extends React.Component<Props, State> {
                             itemScope
                             itemType="http://schema.org/ListItem"
                         >
-                            <Link
-                                to="/dictionary"
-                                itemProp="item"
-                                style={{
-                                    marginRight: "5px",
-                                    marginLeft: "5px",
-                                }}
-                            >
-                                <span itemProp="name">
-                                    {"Japanese dictionary"}
-                                </span>
-                                <meta itemProp="position" content="2" />
-                            </Link>
-                        </span>
-                        {" > "}
-                        <span
-                            itemProp="itemListElement"
-                            itemScope
-                            itemType="http://schema.org/ListItem"
-                        >
                             <span
                                 itemProp="name"
                                 style={{
@@ -304,7 +279,7 @@ class Dictionary extends React.Component<Props, State> {
                             >
                                 {title}
                             </span>
-                            <meta itemProp="position" content="3" />
+                            <meta itemProp="position" content="2" />
                         </span>
                     </div>
                     <article
@@ -493,8 +468,8 @@ class Dictionary extends React.Component<Props, State> {
                                         stories={otherStories}
                                         screenWidth={screenWidth}
                                     />
-                                    <Link
-                                        to="/folktales"
+                                    <a
+                                        href="https://www.lingual-ninja.com/folktales"
                                         style={{
                                             fontSize: "x-large",
                                             display: "block",
@@ -502,7 +477,7 @@ class Dictionary extends React.Component<Props, State> {
                                         }}
                                     >
                                         {"All folktales >>"}
-                                    </Link>
+                                    </a>
                                 </section>
                             </>
                         ) : (
@@ -513,7 +488,7 @@ class Dictionary extends React.Component<Props, State> {
                             />
                         )}
                     </article>
-                    <Link to="/vocabulary-list">
+                    <a href="https://www.lingual-ninja.com/vocabulary-list">
                         <Card
                             body
                             style={{
@@ -531,7 +506,7 @@ class Dictionary extends React.Component<Props, State> {
                             </CardText>
                             <Button color="secondary">Try!</Button>
                         </Card>
-                    </Link>
+                    </a>
                     <hr />
                     <FB />
                     <SeasonAnimation

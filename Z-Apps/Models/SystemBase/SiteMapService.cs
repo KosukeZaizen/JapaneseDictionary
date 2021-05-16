@@ -6,9 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Z_Apps.Util;
-using Z_Apps.Models.Stories.Stories;
-using Z_Apps.Models.Articles;
-using Z_Apps.Models.VocabList;
+using System.Web;
 
 namespace Z_Apps.Models.SystemBase
 {
@@ -52,9 +50,9 @@ namespace Z_Apps.Models.SystemBase
                 "GetSiteMapText",
                 onlyStrageXmlFile ? "true" : "false",
                 async () =>
-             {
-                 return await _GetSiteMapText(onlyStrageXmlFile);
-             });
+                {
+                    return await _GetSiteMapText(onlyStrageXmlFile);
+                });
         }
 
 
@@ -80,93 +78,24 @@ namespace Z_Apps.Models.SystemBase
                     var lstSitemap = new List<Dictionary<string, string>>();
 
                     //------------------------------------------------------------
-                    //Folktales Topページ
-                    var folktaleBaseUrl = "https://www.lingual-ninja.com/folktales";
-                    var topDic = new Dictionary<string, string>();
-                    topDic["loc"] = folktaleBaseUrl;
-                    lstSitemap.Add(topDic);
 
-                    //Folktalesの各ストーリー
-                    var storyManager = new StoryManager(new DBCon());
-                    var allStories = storyManager.GetAllStories();
+                    //top page (noindexのためコメントアウト)
+                    var dic1 = new Dictionary<string, string>();
+                    dic1["loc"] = "https://dictionary.lingual-ninja.com";
+                    lstSitemap.Add(dic1);
 
-                    foreach (var story in allStories)
+                    //各ページ
+                    var wikiService = new WikiService();
+                    IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
+                    foreach (string word in allWords)
                     {
-                        var dicFolktaleURL = new Dictionary<string, string>();
-                        dicFolktaleURL["loc"] = folktaleBaseUrl + "/" + story.StoryName;
-                        lstSitemap.Add(dicFolktaleURL);
+                        var encodedWord = HttpUtility
+                                            .UrlEncode(word, Encoding.UTF8)
+                                            .Replace("+", "%20");
+                        var dicWordId = new Dictionary<string, string>();
+                        dicWordId["loc"] = "https://dictionary.lingual-ninja.com/dictionary/" + encodedWord;
+                        lstSitemap.Add(dicWordId);
                     }
-
-                    //------------------------------------------------------------
-                    //Articles Topページ
-                    var articlesBaseUrl = "https://www.lingual-ninja.com/articles";
-                    var articleTopDic = new Dictionary<string, string>();
-                    articleTopDic["loc"] = articlesBaseUrl;
-                    lstSitemap.Add(articleTopDic);
-
-                    //Articlesの各記事
-                    var articlesService = new ArticlesService();
-                    var allArticles = articlesService.GetAllArticles(true)
-                                .Concat(articlesService.GetAllArticles(false));
-
-                    foreach (var article in allArticles)
-                    {
-                        var dicArticleURL = new Dictionary<string, string>();
-                        dicArticleURL["loc"] = articlesBaseUrl + "/" + article.url;
-                        lstSitemap.Add(dicArticleURL);
-                    }
-
-                    //------------------------------------------------------------
-                    // Vocab List
-                    lstSitemap.Add(new Dictionary<string, string>() {
-                        {"loc", "https://www.lingual-ninja.com/vocabulary-list" }
-                    });
-
-                    // Vocab Quiz Top
-                    string vocabQuizBase = "https://www.lingual-ninja.com/vocabulary-quiz";
-                    lstSitemap.Add(new Dictionary<string, string>() {
-                        {"loc", vocabQuizBase }
-                    });
-
-                    // Kanji Quiz Top
-                    string kanjiQuizBase = "https://www.lingual-ninja.com/kanji-quiz";
-                    lstSitemap.Add(new Dictionary<string, string>() {
-                        {"loc", kanjiQuizBase }
-                    });
-
-                    var vocabManager = new VocabGenreManager(new DBCon());
-                    var allVocabGenres = vocabManager.GetAllGenres();
-
-                    foreach (var vocabGenre in allVocabGenres)
-                    {
-                        lstSitemap.Add(new Dictionary<string, string>() { {
-                                "loc", $"{vocabQuizBase}/{vocabGenre.genreName}"
-                            } });
-                        lstSitemap.Add(new Dictionary<string, string>() { {
-                                "loc", $"{kanjiQuizBase}/{vocabGenre.genreName}"
-                            } });
-                    }
-
-
-                    //------------------------------------------------------------
-                    ////Dictionary機能
-                    //var dictionaryBaseUrl = "https://www.lingual-ninja.com/dictionary";
-
-                    ////top page (noindexのためコメントアウト)
-                    ////var dic1 = new Dictionary<string, string>();
-                    ////dic1["loc"] = domain;
-                    ////lstSitemap.Add(dic1);
-
-                    ////各ページ
-                    //var wikiService = new WikiService();
-                    //IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
-                    //foreach (string word in allWords)
-                    //{
-                    //    var encodedWord = HttpUtility.UrlEncode(word, Encoding.UTF8).Replace("+", "%20");
-                    //    var dicWordId = new Dictionary<string, string>();
-                    //    dicWordId["loc"] = dictionaryBaseUrl + "/" + encodedWord;
-                    //    lstSitemap.Add(dicWordId);
-                    //}
 
                     //------------------------------------------------------------
 

@@ -63,50 +63,8 @@ class DictionaryTop extends React.Component<
                 <Head
                     title="Japanese dictionary"
                     desc="Free website to learn the meaning of Japanese words! You can learn a lot of Japanese words from this page!"
-                    noindex
                 />
                 <div style={{ maxWidth: 700 }}>
-                    <div
-                        className="breadcrumbs"
-                        itemScope
-                        itemType="https://schema.org/BreadcrumbList"
-                        style={{ textAlign: "left" }}
-                    >
-                        <span
-                            itemProp="itemListElement"
-                            itemScope
-                            itemType="http://schema.org/ListItem"
-                        >
-                            <Link
-                                to="/"
-                                itemProp="item"
-                                style={{
-                                    marginRight: "5px",
-                                    marginLeft: "5px",
-                                }}
-                            >
-                                <span itemProp="name">Home</span>
-                            </Link>
-                            <meta itemProp="position" content="1" />
-                        </span>
-                        {" > "}
-                        <span
-                            itemProp="itemListElement"
-                            itemScope
-                            itemType="http://schema.org/ListItem"
-                        >
-                            <span
-                                itemProp="name"
-                                style={{
-                                    marginRight: "5px",
-                                    marginLeft: "5px",
-                                }}
-                            >
-                                Japanese dictionary
-                            </span>
-                            <meta itemProp="position" content="2" />
-                        </span>
-                    </div>
                     <h1
                         style={{
                             margin: "30px",
@@ -114,7 +72,7 @@ class DictionaryTop extends React.Component<
                         }}
                         className="whiteShadow"
                     >
-                        <b>Japanese dictionary</b>
+                        <b>Japanese Dictionary</b>
                     </h1>
                     <p style={styleForAboutTitle}>
                         Free website to learn the meaning of Japanese words!
@@ -137,12 +95,12 @@ class DictionaryTop extends React.Component<
                     )}
                     <hr />
                     <div style={{ fontSize: "x-large", margin: "20px" }}>
-                        <Link to="/folktales">
+                        <a href="https://www.lingual-ninja.com/folktales">
                             {"Learn Japanese from Japanese folktales >>"}
-                        </Link>
+                        </a>
                     </div>
                     <hr />
-                    <Link to="/vocabulary-list">
+                    <a href="https://www.lingual-ninja.com/vocabulary-list">
                         <Card
                             body
                             style={{
@@ -160,7 +118,7 @@ class DictionaryTop extends React.Component<
                             </CardText>
                             <Button color="secondary">Try!</Button>
                         </Card>
-                    </Link>
+                    </a>
                     <hr />
                 </div>
                 <FB />

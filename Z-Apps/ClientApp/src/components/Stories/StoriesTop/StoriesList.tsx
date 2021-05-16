@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { BLOB_URL } from "../../../common/consts";
 import { storyDesc } from "../../../types/stories";
 import { ScrollBox } from "../../parts/ScrollBox";
@@ -61,14 +60,14 @@ export function StoriesList({
                     >
                         <ScrollBox>
                             <HeadTitle headLevel={headLevel}>
-                                <Link
-                                    to={`/folktales/${nameForUrl}`}
+                                <a
+                                    href={`https://www.lingual-ninja.com/folktales/${nameForUrl}`}
                                     style={{
                                         color: "black",
                                     }}
                                 >
                                     {nameToShow}
-                                </Link>
+                                </a>
                             </HeadTitle>
                             <div
                                 style={{
@@ -78,8 +77,8 @@ export function StoriesList({
                                     alignItems: "center",
                                 }}
                             >
-                                <Link
-                                    to={`/folktales/${nameForUrl}`}
+                                <a
+                                    href={`https://www.lingual-ninja.com/folktales/${nameForUrl}`}
                                     style={{
                                         flex: 1,
                                         margin: isWide
@@ -95,7 +94,7 @@ export function StoriesList({
                                         alt={nameToShow}
                                         title={nameToShow}
                                     />
-                                </Link>
+                                </a>
                                 <div
                                     style={{
                                         flex: 1,
@@ -125,9 +124,9 @@ export function StoriesList({
                                             ))}
                                     </div>
                                     <p>
-                                        <Link
-                                            to={`/folktales/${nameForUrl}`}
-                                        >{`Read ${nameToShow} >>`}</Link>
+                                        <a
+                                            href={`https://www.lingual-ninja.com/folktales/${nameForUrl}`}
+                                        >{`Read ${nameToShow} >>`}</a>
                                     </p>
                                 </div>
                             </div>
