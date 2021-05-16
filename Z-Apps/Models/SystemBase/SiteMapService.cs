@@ -62,46 +62,37 @@ namespace Z_Apps.Models.SystemBase
         {
             try
             {
-                //Startup.csのSitemapリクエスト時の処理と、
-                //サイトマップ編集画面の内容をストレージに登録する処理の両方から呼ばれる
-                using (var client = new HttpClient())
+
+                var lstSitemap = new List<Dictionary<string, string>>();
+
+                //------------------------------------------------------------
+
+                //top page (noindexのためコメントアウト)
+                var dic1 = new Dictionary<string, string>();
+                dic1["loc"] = "https://dictionary.lingual-ninja.com";
+                lstSitemap.Add(dic1);
+
+                //各ページ
+                var wikiService = new WikiService();
+                IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
+                foreach (string word in allWords)
                 {
-                    var response = await client.GetAsync(Consts.BLOB_URL + Consts.SITEMAP_PATH);
-                    string sitemapFromStorage = await response.Content.ReadAsStringAsync();
-
-                    if (onlyStrageXmlFile)
-                    {
-                        return sitemapFromStorage;
-                    }
-
-
-                    var lstSitemap = new List<Dictionary<string, string>>();
-
-                    //------------------------------------------------------------
-
-                    //top page (noindexのためコメントアウト)
-                    var dic1 = new Dictionary<string, string>();
-                    dic1["loc"] = "https://dictionary.lingual-ninja.com";
-                    lstSitemap.Add(dic1);
-
-                    //各ページ
-                    var wikiService = new WikiService();
-                    IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
-                    foreach (string word in allWords)
-                    {
-                        var encodedWord = HttpUtility
-                                            .UrlEncode(word, Encoding.UTF8)
-                                            .Replace("+", "%20");
-                        var dicWordId = new Dictionary<string, string>();
-                        dicWordId["loc"] = "https://dictionary.lingual-ninja.com/dictionary/" + encodedWord;
-                        lstSitemap.Add(dicWordId);
-                    }
-
-                    //------------------------------------------------------------
-
-                    string partialXML = GetStringSitemapFromDics(lstSitemap);
-                    return sitemapFromStorage.Replace("</urlset>", partialXML + "</urlset>");
+                    var encodedWord = HttpUtility
+                                        .UrlEncode(word, Encoding.UTF8)
+                                        .Replace("+", "%20");
+                    var dicWordId = new Dictionary<string, string>();
+                    dicWordId["loc"] = "https://dictionary.lingual-ninja.com/dictionary/" + encodedWord;
+                    lstSitemap.Add(dicWordId);
                 }
+
+                //------------------------------------------------------------
+
+                string partialXML = GetStringSitemapFromDics(lstSitemap);
+                return (
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                            + partialXML + "</urlset>"
+                    );
             }
             catch (Exception ex)
             {
