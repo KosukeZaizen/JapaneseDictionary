@@ -19,6 +19,9 @@ namespace Z_Apps.Models.SystemBase
         {
             this.storageService = storageService;
             this.storageBkService = storageBkService;
+
+            // デプロイ直後にサイトマップをキャッシュ
+            var _ = GetSiteMapText();
         }
 
         public async Task<IEnumerable<Dictionary<string, string>>> GetSiteMap(bool onlyStrageXmlFile = false)
