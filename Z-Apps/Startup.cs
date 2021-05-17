@@ -52,13 +52,10 @@ namespace Z_Apps
             services.AddSingleton(con);
             services.AddSingleton(storageService);
             services.AddSingleton(storageBackupService);
-            var siteMapService = new SiteMapService(storageService, storageBackupService);
-            services.AddSingleton(siteMapService);
+            services.AddSingleton(new SiteMapService(storageService, storageBackupService));
             services.AddSingleton(new StoriesService(con));
             services.AddSingleton(new StoriesEditService(con));
             services.AddSingleton(new VocabQuizService(con));
-
-            var _ = siteMapService.GetSiteMapText();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
