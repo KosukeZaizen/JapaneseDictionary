@@ -109,16 +109,9 @@ namespace Z_Apps.Models.SystemBase
 
             foreach (var item in sitemapItems)
             {
-                sb.Append("  <url>");
-                sb.Append("\n");
-
-                sb.Append("    <loc>");
+                sb.Append("<url><loc>");
                 sb.Append(item["loc"]);
-                sb.Append("</loc>");
-                sb.Append("\n");
-
-                sb.Append("  </url>");
-                sb.Append("\n");
+                sb.Append("</loc></url>");
             }
 
             return sb.ToString();
