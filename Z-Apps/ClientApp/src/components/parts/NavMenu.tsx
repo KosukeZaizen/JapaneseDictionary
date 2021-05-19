@@ -9,20 +9,25 @@ import NavbarToggler from "reactstrap/lib/NavbarToggler";
 import NavLink from "reactstrap/lib/NavLink";
 import "./NavMenu.css";
 
+function a(props: any) {
+    return <a href={props.to} {...props} />;
+}
+
 function NavigationItems(props: { closeToggle: () => void }) {
     let objLinks = {
-        // "Japanese Folktales": "/folktales",
-        // "Hiragana / Katakana": "/hiragana-katakana",
-        // Vocabulary: "/vocabulary-list",
-        // Articles: "/articles",
-        // "Action Games": "/ninja",
+        "Japanese Folktales": "https://www.lingual-ninja.com/folktales",
+        "Hiragana / Katakana":
+            "https://www.lingual-ninja.com/hiragana-katakana",
+        Vocabulary: "https://www.lingual-ninja.com/vocabulary-list",
+        Articles: "https://www.lingual-ninja.com/articles",
+        "Action Games": "https://www.lingual-ninja.com/ninja",
     } as const;
     let linkList = [];
     for (let key in objLinks) {
         linkList.push(
             <NavLink
                 key={key}
-                tag={Link}
+                tag={a}
                 className="text-light dropdown"
                 to={objLinks[key as keyof typeof objLinks]}
             >
