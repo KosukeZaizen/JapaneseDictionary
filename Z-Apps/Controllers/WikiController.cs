@@ -6,21 +6,29 @@ using Z_Apps.Models;
 using Z_Apps.Util;
 using static WikiService;
 
-namespace Z_Apps.Controllers {
+namespace Z_Apps.Controllers
+{
 
     [Route("api/[controller]")]
-    public class WikiController : Controller {
+    public class WikiController : Controller
+    {
 
         [HttpGet("[action]")]
-        public IEnumerable<string> GetAllWords(int num) {
-            var service = new WikiService();
-            return service.GetAllWordsFromDB(num);
+        public IEnumerable<string> GetAllWords(int num)
+        {
+            return ApiCache.UseCache(num.ToString(), () =>
+                    {
+                        var service = new WikiService();
+                        return service.GetAllWordsFromDB(num);
+                    });
         }
 
 
         [HttpPost("[action]")]
-        public void Exclude(string word, string token) {
-            if (token != PrivateConsts.REGISTER_PASS) {
+        public void Exclude(string word, string token)
+        {
+            if (token != PrivateConsts.REGISTER_PASS)
+            {
                 return;
             }
 
@@ -40,8 +48,10 @@ UPDATE ZAppsDictionaryCache SET
         }
 
         [HttpPost("[action]")]
-        public void Register(string word, string token, string jsonText) {
-            if (token != PrivateConsts.REGISTER_PASS) {
+        public void Register(string word, string token, string jsonText)
+        {
+            if (token != PrivateConsts.REGISTER_PASS)
+            {
                 return;
             }
 
@@ -63,7 +73,8 @@ UPDATE ZAppsDictionaryCache SET
 
 
         [HttpGet("[action]")]
-        public async Task<CacheResult> GetEnglishWordAndSnippet(string word) {
+        public async Task<CacheResult> GetEnglishWordAndSnippet(string word)
+        {
             var service = new WikiService();
             return await service.GetEnglishWordAndSnippet(word);
         }
