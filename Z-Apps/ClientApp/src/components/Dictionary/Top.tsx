@@ -30,22 +30,18 @@ class DictionaryTop extends React.Component<
     componentDidMount() {
         const getData = async () => {
             const url = `api/Wiki/GetAllWords?num=500`;
-            const response = await cFetch(url);
-            const words = await response.json();
+            const response = cFetch(url);
+
+            const urlAll = `api/Wiki/GetAllWords?num=0`;
+            const responseAll = cFetch(urlAll);
 
             this.setState({
-                words,
+                words: await (await response).json(),
             });
 
-            setTimeout(async () => {
-                const url = `api/Wiki/GetAllWords?num=0`;
-                const response = await cFetch(url);
-                const words = await response.json();
-
-                this.setState({
-                    words,
-                });
-            }, 1000);
+            this.setState({
+                words: await (await responseAll).json(),
+            });
         };
         getData();
     }
