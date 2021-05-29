@@ -54,7 +54,7 @@ class Dictionary extends React.Component<Props, State> {
     componentDidMount() {
         const getData = async () => {
             try {
-                const url = `api/Wiki/GetEnglishWordAndSnippet?word=${this.state.word}`;
+                const url = `api/JapaneseDictionary/GetEnglishWordAndSnippet?word=${this.state.word}`;
                 const res = await cFetch(url);
 
                 const { response, noindex } = await res.json();
@@ -156,7 +156,7 @@ class Dictionary extends React.Component<Props, State> {
                             })
                         );
 
-                        fetch("/api/Wiki/Register", {
+                        fetch("/api/JapaneseDictionary/Register", {
                             method: "POST",
                             body: formData,
                         });

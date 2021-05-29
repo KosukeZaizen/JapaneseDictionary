@@ -21,7 +21,7 @@ export default function AdminMenu() {
     return (
         <>
             <h2>Admin Menu</h2>
-            <ul style={{ marginTop: 20 }}>
+            <ul style={{ marginTop: 30 }}>
                 {pages.map(p => (
                     <li key={p.url} style={{ margin: 10 }}>
                         <Link to={p.url}>{p.title}</Link>

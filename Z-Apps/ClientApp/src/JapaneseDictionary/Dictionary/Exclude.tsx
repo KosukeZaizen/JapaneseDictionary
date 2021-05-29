@@ -26,7 +26,7 @@ export default function Exclude(props: Props) {
         formData.append("word", word);
         formData.append("token", token);
 
-        fetch("/api/Wiki/Exclude", {
+        fetch("/api/JapaneseDictionary/Exclude", {
             method: "POST",
             body: formData,
         });

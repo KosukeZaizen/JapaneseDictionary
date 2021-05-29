@@ -29,10 +29,10 @@ class DictionaryTop extends React.Component<
 
     componentDidMount() {
         const getData = async () => {
-            const url = `api/Wiki/GetAllWords?num=500`;
+            const url = `api/JapaneseDictionary/GetAllWords?num=500`;
             const response = cFetch(url);
 
-            const urlAll = `api/Wiki/GetAllWords?num=0`;
+            const urlAll = `api/JapaneseDictionary/GetAllWords?num=0`;
             const responseAll = cFetch(urlAll);
 
             this.setState({

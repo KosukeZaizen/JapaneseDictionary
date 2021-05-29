@@ -10,7 +10,7 @@ namespace Z_Apps.Controllers
 {
 
     [Route("api/[controller]")]
-    public class WikiController : Controller
+    public class JapaneseDictionaryController : Controller
     {
 
         [HttpGet("[action]")]
