@@ -2,7 +2,7 @@ import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router";
 import ScrollMemory from "react-router-scroll-memory";
-import * as commonFncs from "./common/functions";
+import { reloadAndRedirect_OneTimeReload } from "./common/functions";
 import FooterAnimation from "./JapaneseDictionary/parts/Animations/FooterAnimation";
 import ShurikenProgress from "./JapaneseDictionary/parts/Animations/ShurikenProgress";
 import Layout from "./JapaneseDictionary/parts/Layout";
@@ -74,7 +74,7 @@ function NotFoundRedirect() {
         if (Number(v) !== APP_VERSION) {
             window.location.reload(true);
         } else {
-            commonFncs.reloadAndRedirect_OneTimeReload("pageNotFoundRedirect");
+            reloadAndRedirect_OneTimeReload("pageNotFoundRedirect");
         }
     };
     void redirect();

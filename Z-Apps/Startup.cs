@@ -7,14 +7,10 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Z_Apps.Models;
-using Z_Apps.Models.Stories.Stories;
 using System;
 using Z_Apps.Models.SystemBase;
 using Z_Apps.Models.Stories;
-using Z_Apps.Models.StoriesEdit;
-using Z_Apps.Models.VocabList;
 using Microsoft.AspNetCore.Rewrite;
-using Z_Apps.Controllers;
 using Microsoft.Extensions.Hosting;
 
 namespace Z_Apps
@@ -47,15 +43,11 @@ namespace Z_Apps
 
             var con = new DBCon();
             var storageService = new StorageService();
-            var storageBackupService = new StorageBackupService(con);
 
             services.AddSingleton(con);
             services.AddSingleton(storageService);
-            services.AddSingleton(storageBackupService);
-            services.AddSingleton(new SiteMapService(storageService, storageBackupService));
+            services.AddSingleton(new SiteMapService(storageService));
             services.AddSingleton(new StoriesService(con));
-            services.AddSingleton(new StoriesEditService(con));
-            services.AddSingleton(new VocabQuizService(con));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

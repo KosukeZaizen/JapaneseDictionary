@@ -13,12 +13,10 @@ namespace Z_Apps.Models.SystemBase
     public class SiteMapService
     {
         private readonly StorageService storageService;
-        private readonly StorageBackupService storageBkService;
 
-        public SiteMapService(StorageService storageService, StorageBackupService storageBkService)
+        public SiteMapService(StorageService storageService)
         {
             this.storageService = storageService;
-            this.storageBkService = storageBkService;
 
             // デプロイ直後にサイトマップをキャッシュ
             var _ = GetSiteMapText();
@@ -118,46 +116,6 @@ namespace Z_Apps.Models.SystemBase
             }
 
             return sb.ToString();
-        }
-
-        public async Task<bool> RegisterSitemap(IEnumerable<Dictionary<string, string>> sitemapItems)
-        {
-            //backup
-            var previousXML = await GetSiteMapText();
-            DateTime dt = DateTime.Now;
-            await storageBkService.UploadAndOverwriteFileAsync(previousXML, "lingual-storage-bk/sitemap/" + dt.ToString("yyyy-MM") + "-sitemap.xml");
-
-            //register new sitemap
-            StringBuilder sb = new StringBuilder();
-            sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            sb.Append("\n");
-            sb.Append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
-            sb.Append("\n");
-
-            foreach (var item in sitemapItems)
-            {
-                sb.Append("  <url>");
-                sb.Append("\n");
-
-                sb.Append("    <loc>");
-                sb.Append(item["loc"]);
-                sb.Append("</loc>");
-                sb.Append("\n");
-
-                sb.Append("    <lastmod>");
-                sb.Append(item["lastmod"]);
-                sb.Append("</lastmod>");
-                sb.Append("\n");
-
-                sb.Append("  </url>");
-                sb.Append("\n");
-            }
-            sb.Append("</urlset>");
-
-            string strSitemap = sb.ToString();
-            await storageService.UploadAndOverwriteFileAsync(strSitemap, "appsPublic/sitemap.xml");
-
-            return true;
         }
     }
 }

@@ -10,10 +10,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Z_Apps.Models;
-using Z_Apps.Models.StoriesEdit;
 using Z_Apps.Util;
 
-public class WikiService {
+public class WikiService
+{
     private readonly List<string> ExcludedWords = new List<string>
         {
             "一覧",
@@ -26,7 +26,8 @@ public class WikiService {
             "（",
         };
 
-    public IEnumerable<string> Exclude(IEnumerable<string> words) {
+    public IEnumerable<string> Exclude(IEnumerable<string> words)
+    {
         return (words)
             .Where(
                 word => !ExcludedWords.Any(
@@ -35,7 +36,8 @@ public class WikiService {
     }
 
 
-    public IEnumerable<string> GetAllWordsFromDB(int num) {
+    public IEnumerable<string> GetAllWordsFromDB(int num)
+    {
         var con = new DBCon(DBCon.DBType.wiki_db);
         var sql =
                 num == 0
@@ -54,44 +56,52 @@ public class WikiService {
 
 
     [DataContract]
-    class Data {
+    class Data
+    {
         [DataMember]
         public int? wordId { get; set; }
 
         [DataMember]
         public string snippet { get; set; }
     }
-    class DictionaryResult {
+    class DictionaryResult
+    {
         public int? wordId { get; set; }
         public string snippet { get; set; }
         public string xml { get; set; }
         public string translatedWord { get; set; }
     }
-    public class CacheResult {
+    public class CacheResult
+    {
         public string Response { get; set; }
         public bool Noindex { get; set; }
     }
-    public async Task<CacheResult> GetEnglishWordAndSnippet(string word) {
+    public async Task<CacheResult> GetEnglishWordAndSnippet(string word)
+    {
         var con = new DBCon(DBCon.DBType.wiki_db);
 
-        Func<Task<DictionaryResult>> getDictionaryDataWithoutCache = async () => {
-            try {
-                var storyEdit = new StoriesEditService(new DBCon());
+        Func<Task<DictionaryResult>> getDictionaryDataWithoutCache = async () =>
+        {
+            try
+            {
                 Data w = null;
-                using (var client = new HttpClient()) {
+                using (var client = new HttpClient())
+                {
                     HttpResponseMessage response = await client.GetAsync("https://wiki-jp.lingual-ninja.com/api/WikiWalks/GetWordIdAndSnippet?word=" + word);
                     string json = await response.Content.ReadAsStringAsync();
                     var serializer = new DataContractJsonSerializer(typeof(Data));
-                    using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json))) {
+                    using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                    {
                         w = (Data)serializer.ReadObject(ms);
 
-                        if (w == null || w.wordId == null) {
+                        if (w == null || w.wordId == null)
+                        {
                             return new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
                         }
 
                         //英語に翻訳
                         w.snippet = (
-                            await storyEdit.MakeEnglish(
+                            await MakeEnglish(
                                 w.snippet
                                     .Replace("<bold>", "")
                                     .Replace("<bold", "")
@@ -139,16 +149,19 @@ public class WikiService {
                 wc.Dispose();
 
                 //受信したデータを表示する
-                return new DictionaryResult() {
+                return new DictionaryResult()
+                {
                     xml = enc.GetString(resData),
                     wordId = w.wordId,
                     snippet = w.snippet,
-                    translatedWord = await storyEdit.MakeEnglish(word
+                    translatedWord = await MakeEnglish(word
                             .Replace("#", "")
                             .Replace("?", "")
                             .Replace("&", ""))
                 };
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var json = "removed";
                 con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
                     new Dictionary<string, object[]> {
@@ -168,27 +181,35 @@ public class WikiService {
                         }
                     ).FirstOrDefault();
 
-        if (cache != null) {
+        if (cache != null)
+        {
             //キャッシュデータあり
-            return new CacheResult() {
+            return new CacheResult()
+            {
                 Response = (string)cache["response"],//jsonもしくは「removed」という文字列
                 Noindex = (bool)cache["noindex"]
             };
-        } else {
+        }
+        else
+        {
             //キャッシュデータなし
             DictionaryResult obj;
             string json;
-            if (ExcludedWords.Any(ew => word.Contains(ew))) {
+            if (ExcludedWords.Any(ew => word.Contains(ew)))
+            {
                 //除外対象文字列を含む場合
                 obj = new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
                 json = "removed";
-            } else {
+            }
+            else
+            {
                 //通常時
                 obj = await getDictionaryDataWithoutCache();
                 json = JsonSerializer.Serialize(obj);
             }
 
-            var task = Task.Run(async () => {
+            var task = Task.Run(async () =>
+            {
                 //5秒待って登録
                 await Task.Delay(5 * 1000);
 
@@ -198,7 +219,8 @@ public class WikiService {
                         && obj.translatedWord.Length > 0
                         && json.Contains("wordId")
                     )
-                    || json == "removed") {
+                    || json == "removed")
+                {
                     con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 0);",
                         new Dictionary<string, object[]> {
                             { "@json", new object[2] { SqlDbType.NVarChar, json } },
@@ -208,10 +230,23 @@ public class WikiService {
             });
 
             //上記完了を待たずにreturn
-            return new CacheResult() {
+            return new CacheResult()
+            {
                 Response = json,
                 Noindex = false
             };
+        }
+    }
+
+    public async Task<string> MakeEnglish(string kanji)
+    {
+        string url = @"https://script.google.com/macros/s/AKfycbzIEz24LNM-m92y6elzl8DCoG-uZi-HhDZ5ARQKPtMyll9w6V4/exec?text="
+            + kanji + @"&source=ja&target=en";
+
+        using (var client = new HttpClient())
+        {
+            var result = await client.GetStringAsync(url);
+            return result;
         }
     }
 }
