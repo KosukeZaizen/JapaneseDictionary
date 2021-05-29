@@ -1,5 +1,5 @@
 import React from "react";
-import { AppToMount } from "..";
+import { apps, AppToMount } from "..";
 
 export const appToMount: AppToMount = {
     key: "LocalDebugMenu",
@@ -11,14 +11,24 @@ function LocalDebugMenu() {
     return (
         <div>
             Local Debug Menu
-            <br />
-            <button
-                onClick={() => {
-                    saveKey("JapaneseDictionary");
-                }}
-            >
-                Japanese Dictionary
-            </button>
+            {apps.map(a => {
+                return (
+                    <div
+                        key={a.key}
+                        style={{ border: "solid", margin: 30, padding: 30 }}
+                    >
+                        <h2>{a.key}</h2>
+                        <p>url: {a.hostname}</p>
+                        <button
+                            onClick={() => {
+                                saveKey(a.key);
+                            }}
+                        >
+                            open
+                        </button>
+                    </div>
+                );
+            })}
         </div>
     );
 }

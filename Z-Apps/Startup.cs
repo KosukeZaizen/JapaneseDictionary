@@ -15,7 +15,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Z_Apps
 {
-
     public class Startup
     {
 

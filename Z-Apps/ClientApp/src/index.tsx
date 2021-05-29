@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "react-router-redux";
+import { appToMount as Admin } from "./Admin/App";
 import { startAnimation } from "./common/animation";
 import { azureUrl, siteUrl } from "./common/consts";
 import * as commonFncs from "./common/functions";
@@ -53,7 +54,7 @@ export interface AppToMount {
 }
 
 // アプリ追加時は、この配列に追加
-export const apps: AppToMount[] = [LocalDebugMenu, JapaneseDictionary];
+export const apps: AppToMount[] = [JapaneseDictionary, Admin, LocalDebugMenu];
 const appObject = apps.find(a => window.location.hostname.includes(a.hostname));
 
 if (appObject?.key === "LocalDebugMenu") {

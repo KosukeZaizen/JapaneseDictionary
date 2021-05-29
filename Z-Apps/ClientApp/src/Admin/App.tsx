@@ -7,46 +7,41 @@ import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { ReturnToLocalMenu } from "../LocalDebug/LocalDebugMenu";
 import FooterAnimation from "../sharedComponents/Animations/FooterAnimation";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
-import Layout from "../sharedComponents/Layout";
+import { Helmet } from "../sharedComponents/Helmet";
 import { PopupAd } from "../sharedComponents/YouTubeAd/Popup";
 import { APP_VERSION } from "../version";
 
-const Dictionary = lazy(() => import("./Dictionary"));
-const DictionaryTop = lazy(() => import("./Dictionary/Top"));
-const DictionaryEdit = lazy(() => import("./Dictionary/Edit"));
-const DictionaryExclude = lazy(() => import("./Dictionary/Exclude"));
 const NotFound = lazy(() => import("../sharedComponents/404"));
 
+const AdminMenu = lazy(() => import("./AdminMenu"));
+const WikiLog = lazy(() => import("./WikiLog"));
+const SitemapCount = lazy(() => import("./SitemapCount"));
+
 export const appToMount: AppToMount = {
-    key: "JapaneseDictionary",
-    hostname: "dictionary.lingual-ninja.com",
+    key: "Admin",
+    hostname: "admin.lingual-ninja.com",
     app: App,
 };
 
 function App() {
     return (
-        <Layout>
+        <div style={{ margin: 30 }}>
+            <Helmet noindex />
             <Suspense fallback={<LoadingAnimation num={1} />}>
                 <ScrollMemory />
                 <Switch>
-                    <Route sensitive exact path="/" component={DictionaryTop} />
+                    <Route sensitive exact path="/" component={AdminMenu} />
                     <Route
                         sensitive
                         exact
-                        path="/dictionary/:word"
-                        component={Dictionary}
+                        path="/wiki-log"
+                        component={WikiLog}
                     />
                     <Route
                         sensitive
                         exact
-                        path="/dictionaryEdit/:word"
-                        component={DictionaryEdit}
-                    />
-                    <Route
-                        sensitive
-                        exact
-                        path="/dictionaryExclude/:word"
-                        component={DictionaryExclude}
+                        path="/sitemap-count"
+                        component={SitemapCount}
                     />
                     <Route
                         sensitive
@@ -60,7 +55,7 @@ function App() {
             </Suspense>
             <FooterAnimation />
             <PopupAd />
-        </Layout>
+        </div>
     );
 }
 
