@@ -4,9 +4,9 @@ import {
     restartFooterAnimation,
 } from "../JapaneseDictionary/parts/Animations/FooterAnimation";
 
-export const timeStep = 1000; //ms
+const timeStep = 1000; //ms
 
-export const smoothCSSProperty = {
+const smoothCSSProperty = {
     transitionDuration: `${timeStep / 1000}s`,
     transitionTimingFunction: "linear",
 };

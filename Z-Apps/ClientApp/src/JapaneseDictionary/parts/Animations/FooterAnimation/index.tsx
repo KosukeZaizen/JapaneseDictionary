@@ -1,10 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import {
-    AnimationEngine,
-    smoothCSSProperty,
-    timeStep
-} from "../../../../common/animation";
+import { AnimationEngine } from "../../../../common/animation";
 import { appsPublicImg } from "../../../../common/consts";
 
 const badNinja = appsPublicImg + "ninja_bad.png";
@@ -40,6 +36,13 @@ const initialAnimationState: StateToAnimate = {
 const baseStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 1000000000,
+};
+
+const timeStep = 1000; //ms
+
+const smoothCSSProperty = {
+    transitionDuration: `${timeStep / 1000}s`,
+    transitionTimingFunction: "linear",
 };
 
 export let finishFooterAnimation: () => void;

@@ -2,8 +2,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Container from "reactstrap/lib/Container";
 import { compose } from "recompose";
-import * as baseStore from "../../store/BaseStore";
-import { ApplicationState } from "../../store/configureStore";
+import * as baseStore from "../store/BaseStore";
+import { ApplicationState } from "../store/configureStore";
 import "./Layout.css";
 import NavMenu from "./NavMenu";
 

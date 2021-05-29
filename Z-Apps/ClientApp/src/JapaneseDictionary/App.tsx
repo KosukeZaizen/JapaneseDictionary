@@ -2,22 +2,18 @@ import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router";
 import ScrollMemory from "react-router-scroll-memory";
-import { reloadAndRedirect_OneTimeReload } from "./common/functions";
-import FooterAnimation from "./JapaneseDictionary/parts/Animations/FooterAnimation";
-import ShurikenProgress from "./JapaneseDictionary/parts/Animations/ShurikenProgress";
-import Layout from "./JapaneseDictionary/parts/Layout";
-import { PopupAd } from "./JapaneseDictionary/parts/YouTubeAd/Popup";
-import { APP_VERSION } from "./version";
+import { reloadAndRedirect_OneTimeReload } from "../common/functions";
+import { APP_VERSION } from "../version";
+import FooterAnimation from "./parts/Animations/FooterAnimation";
+import ShurikenProgress from "./parts/Animations/ShurikenProgress";
+import Layout from "./parts/Layout";
+import { PopupAd } from "./parts/YouTubeAd/Popup";
 
-const Dictionary = lazy(() => import("./JapaneseDictionary/Dictionary"));
-const DictionaryTop = lazy(() => import("./JapaneseDictionary/Dictionary/Top"));
-const DictionaryEdit = lazy(
-    () => import("./JapaneseDictionary/Dictionary/Edit")
-);
-const DictionaryExclude = lazy(
-    () => import("./JapaneseDictionary/Dictionary/Exclude")
-);
-const NotFound = lazy(() => import("./JapaneseDictionary/404"));
+const Dictionary = lazy(() => import("./Dictionary"));
+const DictionaryTop = lazy(() => import("./Dictionary/Top"));
+const DictionaryEdit = lazy(() => import("./Dictionary/Edit"));
+const DictionaryExclude = lazy(() => import("./Dictionary/Exclude"));
+const NotFound = lazy(() => import("./404"));
 
 export default class App extends React.Component {
     render() {
