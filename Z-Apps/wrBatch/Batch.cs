@@ -5,10 +5,8 @@ using Z_Apps.Util;
 
 namespace Z_Apps.wrBatch
 {
-
     public class Batch
     {
-
         public static async void runAsync()
         {
 

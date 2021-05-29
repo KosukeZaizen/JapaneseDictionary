@@ -1,7 +1,7 @@
 import React from "react";
 import { BLOB_URL } from "../../../common/consts";
 import { ScrollBox } from "../../parts/ScrollBox";
-import { storyDesc } from "../../types/stories";
+import { storyDesc } from "../types/stories";
 
 const HeadTitle = ({
     children,

@@ -42,11 +42,9 @@ namespace Z_Apps
             });
 
             var con = new DBCon();
-            var storageService = new StorageService();
 
             services.AddSingleton(con);
-            services.AddSingleton(storageService);
-            services.AddSingleton(new SiteMapService(storageService));
+            services.AddSingleton(new SiteMapService());
             services.AddSingleton(new StoriesService(con));
         }
 
@@ -83,7 +81,7 @@ namespace Z_Apps
                     context.Response.Headers.Add("Content-Type", "application/xml");
 
                     await context.Response.WriteAsync(
-                        await siteMapService.GetSiteMapText()
+                        siteMapService.GetSiteMapText()
                     );
                 }
                 else if (ua.StartsWith("facebookexternalhit") || ua.StartsWith("Twitterbot"))

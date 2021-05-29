@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Z_Apps.Util;
 using System.Web;
 
@@ -12,58 +9,31 @@ namespace Z_Apps.Models.SystemBase
 {
     public class SiteMapService
     {
-        private readonly StorageService storageService;
-
-        public SiteMapService(StorageService storageService)
+        public SiteMapService()
         {
-            this.storageService = storageService;
-
             // デプロイ直後にサイトマップをキャッシュ
-            var _ = GetSiteMapText();
+            Task.Run(() => { GetSiteMapText(); });
         }
 
-        public async Task<IEnumerable<Dictionary<string, string>>> GetSiteMap(bool onlyStrageXmlFile = false)
+        public string GetSiteMapText()
         {
-            var listResult = new List<Dictionary<string, string>>();
-
-            var resultXML = await GetSiteMapText(onlyStrageXmlFile);
-
-            XElement xmlTree = XElement.Parse(resultXML);
-            var urls = xmlTree.Elements();
-
-            foreach (XElement url in urls)
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("loc", url.Elements().Where(u => u.Name.ToString().Contains("loc")).First().Value);
-                dic.Add("lastmod", url.Elements().Where(u => u.Name.ToString().Contains("lastmod")).First().Value);
-
-                listResult.Add(dic);
-            }
-
-            return listResult;
+            return CacheSitemap();
         }
 
-
-        public async Task<string> GetSiteMapText(bool onlyStrageXmlFile = false)
+        private string CacheSitemap()
         {
-            return await ApiCache.UseCacheAsync(
-                "Z_Apps.Models.SystemBase.SiteMapService",
-                "GetSiteMapText",
-                onlyStrageXmlFile ? "true" : "false",
-                async () =>
-                {
-                    return await _GetSiteMapText(onlyStrageXmlFile);
-                });
+            // サイトマップ取得元を複数あるため、
+            // キャッシュを統一するためにこのprivate関数を挟む
+            return ApiCache.UseCache<string>(
+                    "p",
+                    _GetSiteMapText
+                );
         }
 
-
-        public async Task<string> _GetSiteMapText(
-            bool onlyStrageXmlFile = false
-        )
+        private string _GetSiteMapText()
         {
             try
             {
-
                 var lstSitemap = new List<Dictionary<string, string>>();
 
                 //------------------------------------------------------------

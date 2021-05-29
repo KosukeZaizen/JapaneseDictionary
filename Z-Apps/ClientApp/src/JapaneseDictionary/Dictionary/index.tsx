@@ -17,7 +17,7 @@ import CharacterComment from "../parts/CharacterComment";
 import FB from "../parts/FaceBook";
 import Head from "../parts/Helmet";
 import { StoriesList } from "../Stories/StoriesTop/StoriesList";
-import { storyDesc } from "../types/stories";
+import { storyDesc } from "../Stories/types/stories";
 import { getRomaji } from "./romajiConvert";
 
 type Props = {
