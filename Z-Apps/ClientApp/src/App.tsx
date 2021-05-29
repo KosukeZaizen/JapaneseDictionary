@@ -3,60 +3,21 @@ import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router";
 import ScrollMemory from "react-router-scroll-memory";
 import * as commonFncs from "./common/functions";
-import FooterAnimation from "./components/parts/Animations/FooterAnimation";
-import ShurikenProgress from "./components/parts/Animations/ShurikenProgress";
-import Layout from "./components/parts/Layout";
-import { PopupAd } from "./components/parts/YouTubeAd/Popup";
+import FooterAnimation from "./JapaneseDictionary/parts/Animations/FooterAnimation";
+import ShurikenProgress from "./JapaneseDictionary/parts/Animations/ShurikenProgress";
+import Layout from "./JapaneseDictionary/parts/Layout";
+import { PopupAd } from "./JapaneseDictionary/parts/YouTubeAd/Popup";
 import { APP_VERSION } from "./version";
 
-const Home = lazy(() => import("./components/Home"));
-const Terms = lazy(() => import("./components/Terms"));
-const Developer = lazy(() => import("./components/Developer"));
-const RomajiConverter = lazy(() => import("./components/RomajiConverter"));
-const KanjiConverter = lazy(() => import("./components/KanjiConverter"));
-const HiraganaAndKatakana = lazy(
-    () => import("./components/HiraganaAndKatakana")
+const Dictionary = lazy(() => import("./JapaneseDictionary/Dictionary"));
+const DictionaryTop = lazy(() => import("./JapaneseDictionary/Dictionary/Top"));
+const DictionaryEdit = lazy(
+    () => import("./JapaneseDictionary/Dictionary/Edit")
 );
-const HiraganaQuiz = lazy(() => import("./components/HiraganaQuiz"));
-const KatakanaQuiz = lazy(() => import("./components/KatakanaQuiz"));
-const VocabList = lazy(() => import("./components/Vocab/VocabList"));
-const VocabQuiz = lazy(() => import("./components/Vocab/VocabQuiz"));
-const VocabQuizTop = lazy(() => import("./components/Vocab/VocabQuizTop"));
-const VocabKanjiQuiz = lazy(() => import("./components/Vocab/VocabKanjiQuiz"));
-const VocabKanjiQuizTop = lazy(
-    () => import("./components/Vocab/VocabKanjiQuizTop")
+const DictionaryExclude = lazy(
+    () => import("./JapaneseDictionary/Dictionary/Exclude")
 );
-const VocabVideo = lazy(() => import("./components/Vocab/VocabVideo"));
-const VocabEdit = lazy(() => import("./components/Vocab/Edit"));
-const VocabEditTop = lazy(() => import("./components/Vocab/Edit/Top"));
-const Stories = lazy(() => import("./components/Stories"));
-const StoriesTop = lazy(() => import("./components/Stories/StoriesTop"));
-const StoriesEdit = lazy(() => import("./components/Stories/StoriesEdit"));
-const StoriesEditTop = lazy(
-    () => import("./components/Stories/StoriesTop/StoriesEditTop")
-);
-const StoriesVideo = lazy(() => import("./components/Stories/StoriesVideo"));
-const NinjaTop = lazy(() => import("./components/Games/NinjaGameTop"));
-const Ninja1 = lazy(() => import("./components/Games/NinjaGame"));
-const Ninja2 = lazy(() => import("./components/Games/NinjaGame2"));
-const Ninja3 = lazy(() => import("./components/Games/NinjaGame3"));
-const GameToLearn = lazy(() => import("./components/Games/GameToLearn"));
-const GameOver = lazy(() => import("./components/Games/GameOver"));
-const Dictionary = lazy(() => import("./components/Dictionary"));
-const DictionaryTop = lazy(() => import("./components/Dictionary/Top"));
-const DictionaryEdit = lazy(() => import("./components/Dictionary/Edit"));
-const DictionaryExclude = lazy(() => import("./components/Dictionary/Exclude"));
-const Articles = lazy(() => import("./components/Articles"));
-const ArticlesTop = lazy(() => import("./components/Articles/Top"));
-const ArticlesEditTop = lazy(() => import("./components/Articles/EditTop"));
-const ArticlesEdit = lazy(() => import("./components/Articles/Edit"));
-const SiteMapEdit = lazy(() => import("./components/SiteMapEdit"));
-const Admin = lazy(() => import("./components/Admin"));
-const ApiCache = lazy(() => import("./components/Admin/ApiCache"));
-const OpeLogTable = lazy(() => import("./components/Admin/OpeLogTable"));
-const ColorPalette = lazy(() => import("./components/ColorPalette"));
-const Boscobel = lazy(() => import("./components/Boscobel"));
-const NotFound = lazy(() => import("./components/404"));
+const NotFound = lazy(() => import("./JapaneseDictionary/404"));
 
 export default class App extends React.Component {
     render() {
@@ -71,33 +32,11 @@ export default class App extends React.Component {
                             path="/"
                             component={DictionaryTop}
                         />
-                        {/* <Route
-                            sensitive
-                            exact
-                            path="/dictionary"
-                            component={DictionaryTop}
-                        /> */}
                         <Route
                             sensitive
                             exact
                             path="/dictionary/:word"
                             component={Dictionary}
-                        />
-                        <Route
-                            sensitive
-                            exact
-                            path="/how-to-read-japanese/:word"
-                            component={(props: {
-                                match: { params: { word: string } };
-                            }) => {
-                                const {
-                                    match: {
-                                        params: { word },
-                                    },
-                                } = props;
-                                window.location.href = `/dictionary/${word}`;
-                                return null;
-                            }}
                         />
                         <Route
                             sensitive
@@ -110,12 +49,6 @@ export default class App extends React.Component {
                             exact
                             path="/dictionaryExclude/:word"
                             component={DictionaryExclude}
-                        />
-                        <Route sensitive path="/admin" component={Admin} />
-                        <Route
-                            sensitive
-                            path="/apiCache"
-                            component={ApiCache}
                         />
                         <Route
                             sensitive

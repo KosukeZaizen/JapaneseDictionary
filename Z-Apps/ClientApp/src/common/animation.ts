@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
     finishFooterAnimation,
     restartFooterAnimation,
-} from "../components/parts/Animations/FooterAnimation";
+} from "../JapaneseDictionary/parts/Animations/FooterAnimation";
 
 export const timeStep = 1000; //ms
 
