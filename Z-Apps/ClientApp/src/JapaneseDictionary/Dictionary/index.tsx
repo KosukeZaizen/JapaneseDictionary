@@ -11,13 +11,13 @@ import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
 import CardTitle from "reactstrap/lib/CardTitle";
 import { cFetch } from "../../common/util/cFetch";
-import { storyDesc } from "../../types/stories";
 import { SeasonAnimation } from "../parts/Animations/SeasonAnimation";
 import ShurikenProgress from "../parts/Animations/ShurikenProgress";
 import CharacterComment from "../parts/CharacterComment";
 import FB from "../parts/FaceBook";
 import Head from "../parts/Helmet";
 import { StoriesList } from "../Stories/StoriesTop/StoriesList";
+import { storyDesc } from "../types/stories";
 import { getRomaji } from "./romajiConvert";
 
 type Props = {

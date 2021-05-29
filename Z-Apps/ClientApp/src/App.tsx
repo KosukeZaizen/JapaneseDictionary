@@ -66,18 +66,18 @@ export default class App extends React.Component {
 }
 
 function NotFoundRedirect() {
-    const url = `api/SystemBase/GetVersion/V${new Date().getMilliseconds()}`;
-    fetch(url).then(res => {
-        res.json().then(v => {
-            if (Number(v) !== APP_VERSION) {
-                window.location.reload(true);
-            } else {
-                commonFncs.reloadAndRedirect_OneTimeReload(
-                    "pageNotFoundRedirect"
-                );
-            }
-        });
-    });
+    const redirect = async () => {
+        const url = `api/SystemBase/GetVersion/V${new Date().getMilliseconds()}`;
+        const res = await fetch(url);
+        const v = await res.text();
+
+        if (Number(v) !== APP_VERSION) {
+            window.location.reload(true);
+        } else {
+            commonFncs.reloadAndRedirect_OneTimeReload("pageNotFoundRedirect");
+        }
+    };
+    void redirect();
 
     return (
         <div>
