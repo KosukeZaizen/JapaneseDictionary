@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Helmet as ReactHelmet } from "react-helmet";
-import * as consts from "../../common/consts";
+import * as consts from "../common/consts";
 import { isGoogleAdsDisplayed } from "./GoogleAd";
 
 export const Helmet = (props: {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getFallingImages } from ".";
-import { sendPost } from "../../../../common/functions";
-import { compareObjects } from "../../../../common/util/compareObjects";
+import { sendPost } from "../../../common/functions";
+import { compareObjects } from "../../../common/util/compareObjects";
 import { getCurrentToken, InputRegisterToken } from "../../InputRegisterToken";
 import { fallingImage } from "./type";
 

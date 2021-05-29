@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { appsPublicImg } from "../../../../common/consts";
-import { cFetch } from "../../../../common/util/cFetch";
+import { appsPublicImg } from "../../../common/consts";
+import { cFetch } from "../../../common/util/cFetch";
 import "./animation.css";
 import { fallingImage } from "./type";
 

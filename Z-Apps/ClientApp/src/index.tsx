@@ -11,8 +11,9 @@ import * as commonFncs from "./common/functions";
 import { checkAppVersion } from "./common/functions";
 import { GOOGLE_ANALYTICS } from "./common/privateConsts";
 import "./css/index.css";
-import JapaneseDictionaryApp from "./JapaneseDictionary/App";
+import { appToMount as JapaneseDictionary } from "./JapaneseDictionary/App";
 import configureStore from "./JapaneseDictionary/store/configureStore";
+import { appToMount as LocalDebugMenu } from "./LocalDebug/LocalDebugMenu";
 //import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
 
@@ -45,14 +46,36 @@ const store = configureStore(history, initialState);
 
 const rootElement = document.getElementById("root");
 
-ReactDOM.render(
-    <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <JapaneseDictionaryApp />
-        </ConnectedRouter>
-    </Provider>,
-    rootElement
-);
+export interface AppToMount {
+    key: string;
+    hostname: string;
+    app: React.FunctionComponent;
+}
+
+// アプリ追加時は、この配列に追加
+export const apps: AppToMount[] = [LocalDebugMenu, JapaneseDictionary];
+const appObject = apps.find(a => window.location.hostname.includes(a.hostname));
+
+if (appObject?.key === "LocalDebugMenu") {
+    const savedAppKey = window.localStorage.getItem("appKeyToMount");
+    const savedApp = apps.find(a => a.key === savedAppKey);
+    if (savedApp) {
+        appObject.app = savedApp.app;
+    }
+}
+
+if (!appObject) {
+    window.location.href = "https://dictionary.lingual-ninja.com";
+} else {
+    ReactDOM.render(
+        <Provider store={store}>
+            <ConnectedRouter history={history}>
+                <appObject.app />
+            </ConnectedRouter>
+        </Provider>,
+        rootElement
+    );
+}
 
 //registerServiceWorker();
 unregister();

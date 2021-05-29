@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 import { getParams } from "../common/functions";
-import Head from "./parts/Helmet";
+import Head from "../sharedComponents/Helmet";
 const img404 = require("../img/404.png");
 
 const NotFound = () => {

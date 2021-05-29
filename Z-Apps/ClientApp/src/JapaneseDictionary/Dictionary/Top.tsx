@@ -5,9 +5,9 @@ import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
 import CardTitle from "reactstrap/lib/CardTitle";
 import { cFetch } from "../../common/util/cFetch";
-import ShurikenProgress from "../parts/Animations/ShurikenProgress";
-import FB from "../parts/FaceBook";
-import Head from "../parts/Helmet";
+import ShurikenProgress from "../../sharedComponents/Animations/ShurikenProgress";
+import FB from "../../sharedComponents/FaceBook";
+import Head from "../../sharedComponents/Helmet";
 
 class DictionaryTop extends React.Component<
     {},

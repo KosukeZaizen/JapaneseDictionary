@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect } from "react";
-import Head from "../parts/Helmet";
+import Head from "../../sharedComponents/Helmet";
 
 type Props = {
     location: { pathname: string };

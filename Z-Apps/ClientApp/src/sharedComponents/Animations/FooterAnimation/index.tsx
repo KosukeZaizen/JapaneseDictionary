@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { AnimationEngine } from "../../../../common/animation";
-import { appsPublicImg } from "../../../../common/consts";
+import { AnimationEngine } from "../../../common/animation";
+import { appsPublicImg } from "../../../common/consts";
 
 const badNinja = appsPublicImg + "ninja_bad.png";
 const rock = appsPublicImg + "rockRight.png";

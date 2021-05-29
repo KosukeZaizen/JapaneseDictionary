@@ -1,5 +1,5 @@
 import * as React from "react";
-import { appsPublicImg } from "../../../../common/consts";
+import { appsPublicImg } from "../../../common/consts";
 import "./animation.css";
 
 const shuriken = appsPublicImg + "shuriken.png";

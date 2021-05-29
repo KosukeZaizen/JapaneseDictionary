@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as consts from "../../../common/consts";
+import * as consts from "../../common/consts";
 import "./CharacterComment.css";
 
 type TProps = {

@@ -1,5 +1,5 @@
 import React from "react";
-import { sendClientOpeLog } from "../../../common/functions";
+import { sendClientOpeLog } from "../../common/functions";
 
 export const YouTubeAd = ({ width }: { width?: number | string }) => (
     <a

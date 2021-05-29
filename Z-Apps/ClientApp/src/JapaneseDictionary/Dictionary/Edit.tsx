@@ -1,8 +1,8 @@
 import * as React from "react";
 import Button from "reactstrap/lib/Button";
 import { cFetch } from "../../common/util/cFetch";
-import Head from "../parts/Helmet";
-import { InputRegisterToken } from "../parts/InputRegisterToken";
+import Head from "../../sharedComponents/Helmet";
+import { InputRegisterToken } from "../../sharedComponents/InputRegisterToken";
 type Props = {
     location: { pathname: string };
     match: { params: { word: string } };
