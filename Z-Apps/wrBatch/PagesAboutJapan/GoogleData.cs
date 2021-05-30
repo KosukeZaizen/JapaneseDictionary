@@ -145,25 +145,41 @@ namespace Z_Apps.wrBatch
             var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
             var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
 
-            var category = categories
+            var filteredCategories = categories
                 .Elements()
                 .Select(c => c.Attribute("title").Value.Replace("Category:", ""))
                 .Where(c =>
-                {
-                    string lower = c.ToLower();
-                    return lower.Contains("japan") &&
-                            !lower.Contains("articles") &&
-                            !lower.Contains("cs1") &&
-                            !lower.Contains("use") &&
-                            !lower.Contains("using") &&
-                            !lower.Contains("ambiguation") &&
-                            !lower.Contains("wikidata");
-                }
+                    {
+                        string lower = c.ToLower();
+                        return lower.Contains("japan") &&
+                                !lower.Contains("articles") &&
+                                !lower.Contains("cs1") &&
+                                !lower.Contains("use") &&
+                                !lower.Contains("using") &&
+                                !lower.Contains("ambiguation") &&
+                                !lower.Contains("wikidata");
+                    }
                 )
-                .OrderBy(c => c.Length)
-                .FirstOrDefault();
+                .OrderBy(c => c.Length);
 
-            return category;
+            var categoryWithoutNumber = filteredCategories
+                                        .FirstOrDefault(c => !c.Contains("0") &&
+                                                            !c.Contains("1") &&
+                                                            !c.Contains("2") &&
+                                                            !c.Contains("3") &&
+                                                            !c.Contains("4") &&
+                                                            !c.Contains("5") &&
+                                                            !c.Contains("6") &&
+                                                            !c.Contains("7") &&
+                                                            !c.Contains("8") &&
+                                                            !c.Contains("9"));
+
+            if (categoryWithoutNumber != null)
+            {
+                // 数値を含まないものがあれば、そちらを優先
+                return categoryWithoutNumber;
+            }
+            return filteredCategories.FirstOrDefault();
         }
 
         private static IEnumerable<string> GetWordsToRegister()
