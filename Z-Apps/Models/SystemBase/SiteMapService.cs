@@ -37,9 +37,9 @@ namespace Z_Apps.Models.SystemBase
         private string CacheSitemap(string hostName)
         {
             return ApiCache.UseCache<string>(
-                    hostName,
-                    () => _GetSiteMapText(hostName)
-                );
+                        hostName,
+                        () => _GetSiteMapText(hostName)
+                    );
         }
 
         private string _GetSiteMapText(string url)

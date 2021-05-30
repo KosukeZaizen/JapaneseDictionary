@@ -14,6 +14,7 @@ const NotFound = lazy(() => import("../sharedComponents/404"));
 const AdminMenu = lazy(() => import("./AdminMenu"));
 const WikiLog = lazy(() => import("./WikiLog"));
 const SitemapCount = lazy(() => import("./SitemapCount"));
+const ApiCache = lazy(() => import("./ApiCache"));
 
 export const appToMount: AppToMount = {
     key: "Admin",
@@ -40,6 +41,12 @@ function App() {
                         exact
                         path="/sitemap-count"
                         component={SitemapCount}
+                    />
+                    <Route
+                        sensitive
+                        exact
+                        path="/api-cache"
+                        component={ApiCache}
                     />
                     <Route
                         sensitive

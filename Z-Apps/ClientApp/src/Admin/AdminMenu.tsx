@@ -15,6 +15,10 @@ const pages: Pages = [
         url: "/sitemap-count",
         title: "Sitemap Count",
     },
+    {
+        url: "/api-cache",
+        title: "Api Cache",
+    },
 ];
 
 export default function AdminMenu() {
