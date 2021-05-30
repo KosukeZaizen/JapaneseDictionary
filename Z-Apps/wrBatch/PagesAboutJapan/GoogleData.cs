@@ -148,13 +148,17 @@ namespace Z_Apps.wrBatch
             var category = categories
                 .Elements()
                 .Select(c => c.Attribute("title").Value.Replace("Category:", ""))
-                .Where(c => c.ToLower().Contains("japan"))
-                .Where(c => !c.Contains("articles") &&
-                            !c.Contains("cs1") &&
-                            !c.Contains("use") &&
-                            !c.Contains("using") &&
-                            !c.Contains("ambiguation") &&
-                            !c.Contains("wikidata")
+                .Where(c =>
+                {
+                    string lower = c.ToLower();
+                    return lower.Contains("japan") &&
+                            !lower.Contains("articles") &&
+                            !lower.Contains("cs1") &&
+                            !lower.Contains("use") &&
+                            !lower.Contains("using") &&
+                            !lower.Contains("ambiguation") &&
+                            !lower.Contains("wikidata");
+                }
                 )
                 .OrderBy(c => c.Length)
                 .FirstOrDefault();
