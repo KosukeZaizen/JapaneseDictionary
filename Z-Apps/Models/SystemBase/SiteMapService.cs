@@ -9,51 +9,59 @@ namespace Z_Apps.Models.SystemBase
 {
     public class SiteMapService
     {
+        // アプリ追加時は、hostNamesに新しいドメインを追加する
+        public Dictionary<string, string> hostNames = new Dictionary<string, string>(){
+            {"dictionary", "dictionary.lingual-ninja.com"},
+            {"local", "localhost"}
+        };
+
         public SiteMapService()
         {
             // デプロイ直後にサイトマップをキャッシュ
-            Task.Run(() => { GetSiteMapText(); });
+            Task.Run(() =>
+            {
+                foreach (var (key, hostName) in hostNames)
+                {
+                    GetSiteMapText(hostName);
+                }
+            });
         }
 
-        public string GetSiteMapText()
-        {
-            return CacheSitemap();
-        }
-
-        private string CacheSitemap()
+        public string GetSiteMapText(string hostName)
         {
             // サイトマップ取得元を複数あるため、
             // キャッシュを統一するためにこのprivate関数を挟む
+            return CacheSitemap(hostName);
+        }
+
+        private string CacheSitemap(string hostName)
+        {
             return ApiCache.UseCache<string>(
-                    "p",
-                    _GetSiteMapText
+                    hostName,
+                    () => _GetSiteMapText(hostName)
                 );
         }
 
-        private string _GetSiteMapText()
+        private string _GetSiteMapText(string url)
         {
             try
             {
-                var lstSitemap = new List<Dictionary<string, string>>();
+                List<Dictionary<string, string>> lstSitemap;
 
-                //------------------------------------------------------------
-
-                //top page (noindexのためコメントアウト)
-                var dic1 = new Dictionary<string, string>();
-                dic1["loc"] = "https://dictionary.lingual-ninja.com";
-                lstSitemap.Add(dic1);
-
-                //各ページ
-                var wikiService = new WikiService();
-                IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
-                foreach (string word in allWords)
+                if (url == hostNames["dictionary"])
                 {
-                    var encodedWord = HttpUtility
-                                        .UrlEncode(word, Encoding.UTF8)
-                                        .Replace("+", "%20");
-                    var dicWordId = new Dictionary<string, string>();
-                    dicWordId["loc"] = "https://dictionary.lingual-ninja.com/dictionary/" + encodedWord;
-                    lstSitemap.Add(dicWordId);
+                    // Japanese Dictionary
+                    lstSitemap = GetJapaneseDictionarySitemap();
+                }
+                else if (url == hostNames["local"])
+                {
+                    // ローカルでのデバッグ時
+                    lstSitemap = GetLocalhostSitemap();
+                }
+                else
+                {
+                    // ヒットするURLが無ければ空
+                    lstSitemap = new List<Dictionary<string, string>>();
                 }
 
                 //------------------------------------------------------------
@@ -73,6 +81,43 @@ namespace Z_Apps.Models.SystemBase
             return "";
         }
 
+        private List<Dictionary<string, string>> GetJapaneseDictionarySitemap()
+        {
+            var lstSitemap = new List<Dictionary<string, string>>();
+
+            //top page (noindexのためコメントアウト)
+            var dic1 = new Dictionary<string, string>();
+            dic1["loc"] = "https://dictionary.lingual-ninja.com";
+            lstSitemap.Add(dic1);
+
+            //各ページ
+            var wikiService = new WikiService();
+            IEnumerable<string> allWords = wikiService.GetAllWordsFromDB(0);
+            foreach (string word in allWords)
+            {
+                var encodedWord = HttpUtility
+                                    .UrlEncode(word, Encoding.UTF8)
+                                    .Replace("+", "%20");
+                var dicWordId = new Dictionary<string, string>();
+                dicWordId["loc"] = "https://dictionary.lingual-ninja.com/dictionary/"
+                                        + encodedWord;
+
+                lstSitemap.Add(dicWordId);
+            }
+
+            return lstSitemap;
+        }
+
+        private List<Dictionary<string, string>> GetLocalhostSitemap()
+        {
+            var lstSitemap = new List<Dictionary<string, string>>();
+
+            var localDic = new Dictionary<string, string>();
+            localDic["loc"] = "This_is_localhost_sitemap";
+            lstSitemap.Add(localDic);
+
+            return lstSitemap;
+        }
 
         private string GetStringSitemapFromDics(IEnumerable<Dictionary<string, string>> sitemapItems)
         {

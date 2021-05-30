@@ -17,7 +17,6 @@ namespace Z_Apps
 {
     public class Startup
     {
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -79,8 +78,17 @@ namespace Z_Apps
                 {
                     context.Response.Headers.Add("Content-Type", "application/xml");
 
+                    var hostName = siteMapService
+                                    .hostNames
+                                    .FirstOrDefault(
+                                        h => context
+                                            .Request
+                                            .Host
+                                            .Host
+                                            .Contains(h.Value));
+
                     await context.Response.WriteAsync(
-                        siteMapService.GetSiteMapText()
+                        siteMapService.GetSiteMapText(hostName.Value)
                     );
                 }
                 else if (ua.StartsWith("facebookexternalhit") || ua.StartsWith("Twitterbot"))
