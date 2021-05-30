@@ -7,31 +7,51 @@ namespace Z_Apps.wrBatch
 {
     public class Batch
     {
-        public static async void runAsync()
+        public static void runAsync()
         {
+            startBat(
+                ApiCache.DeleteOldCache,
+                1000 * 60 * 60 * 24, // 毎日実行
+                1000 * 60 * 60 * 5 //デプロイ後５時間待機
+            );
 
-            await Task.Delay(1000 * 60 * 60 * 5);//デプロイ後５時間待機
+            startBat(
+                SitemapCountManager.setSitemapCount,
+                1000 * 60 * 60 * 3 // ３時間に１回実行
+            );
+        }
 
-            while (true)
+        private static void startBat(Action action, int interval, int delay = 0)
+        {
+            Action start = async () =>
             {
-                try
-                {
+                await Task.Delay(delay);
 
-                    var t = Task.Run(() =>
+                while (true)
+                {
+                    try
                     {
-                        // MakeDbBackupAsync();
-                        // DeleteOpeLogs();
-                        ApiCache.DeleteOldCache();
-                    });
+                        try
+                        {
+                            var t = Task.Run(() =>
+                            {
+                                action();
+                            });
 
-                    await Task.Delay(1000 * 60 * 60 * 24);//１日待機
-
+                            await Task.Delay(interval);
+                        }
+                        catch (Exception ex)
+                        {// エラーログ書き込み
+                            ErrorLog.InsertErrorLog(ex.Message);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // エラーログ書き込みでエラーが起きた場合は、何もしない
+                    }
                 }
-                catch (Exception ex)
-                {
-                    ErrorLog.InsertErrorLog(ex.Message);
-                }
-            }
+            };
+            Task.Run(start);
         }
     }
 }

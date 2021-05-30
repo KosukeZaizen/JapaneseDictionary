@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Z_Apps.Models;
+using Z_Apps.wrBatch;
 
 namespace Z_Apps.Controllers
 {
@@ -41,6 +42,12 @@ FROM LastTopUpdate;
             });
 
             return result;
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<SitemapCount> GetSitemapCount()
+        {
+            return SitemapCountManager.counts;
         }
     }
 }
