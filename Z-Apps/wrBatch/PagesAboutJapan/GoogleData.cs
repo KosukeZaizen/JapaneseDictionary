@@ -20,9 +20,6 @@ namespace Z_Apps.wrBatch
             {
                 try
                 {
-                    //15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
-                    await Task.Delay(1000 * 60 * 15);
-
                     var wordsToRegister = GetWordsToRegister();
 
                     foreach (var word in wordsToRegister)
@@ -34,11 +31,6 @@ namespace Z_Apps.wrBatch
                         catch (Exception ex)
                         {
                             ErrorLog.InsertErrorLog(ex.Message);
-                        }
-                        finally
-                        {
-                            //15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
-                            await Task.Delay(1000 * 60 * 15);
                         }
                     }
                 }
@@ -52,7 +44,15 @@ namespace Z_Apps.wrBatch
         private static async Task RegisterWordAndCategory(string word)
         {
             var category = await GetCategory(word);
-            var googleResult = await GetGoogleResult(word);
+            if (string.IsNullOrEmpty(category))
+            {
+                return;
+            }
+            var googleResultItems = (await GetGoogleResult(word)).items;
+            if (googleResultItems == null || googleResultItems.Count() <= 5)
+            {
+                return;
+            }
 
             new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
                 {
@@ -73,7 +73,7 @@ namespace Z_Apps.wrBatch
                         }
 
                         // 単語に対するGoogle検索結果の登録
-                        foreach (var article in googleResult.items)
+                        foreach (var article in googleResultItems)
                         {
                             var pageResultCount = execUpdate(
                                 @"insert into pajRelatedPages(pageName,relatedWord,link,explanation)
@@ -105,9 +105,10 @@ namespace Z_Apps.wrBatch
 
         private static async Task<GoogleResult> GetGoogleResult(string word)
         {
-            await Task.Delay(2000);
             var url = GetGoogleUrlWithParam(word);
 
+            //15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
+            await Task.Delay(1000 * 60 * 15);
             var json = await Fetch.GetAsync(url);
 
             return JsonConvert.DeserializeObject<GoogleResult>(json);
@@ -148,6 +149,13 @@ namespace Z_Apps.wrBatch
                 .Elements()
                 .Select(c => c.Attribute("title").Value.Replace("Category:", ""))
                 .Where(c => c.ToLower().Contains("japan"))
+                .Where(c => !c.Contains("articles") &&
+                            !c.Contains("cs1") &&
+                            !c.Contains("use") &&
+                            !c.Contains("using") &&
+                            !c.Contains("ambiguation") &&
+                            !c.Contains("wikidata")
+                )
                 .OrderBy(c => c.Length)
                 .FirstOrDefault();
 

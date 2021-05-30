@@ -147,7 +147,7 @@ namespace Z_Apps.Models
         {
             return (string sql, Dictionary<string, object[]> dicParams) =>
             {
-                command.CommandText = sql;
+                command.CommandText = "SET ANSI_WARNINGS OFF; " + sql;
                 command.Parameters.Clear();
 
                 // パラーメータの置換
