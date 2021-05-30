@@ -92,7 +92,7 @@ namespace Z_Apps.Models
 
         public bool ExecuteUpdate(
             string sql,
-            Dictionary<string, object[]> dicParams,
+            Dictionary<string, object[]> dicParams = null,
             int timeoutSecond = 0
         )
         {
@@ -174,13 +174,20 @@ namespace Z_Apps.Models
         // funcを引数として受け取り、そのfunc内の処理の前後に
         // TransactionのBeginやCommitを行う
         public bool UseTransaction(
-            Func<Func<string, Dictionary<string, object[]>, int>, bool> func
+            Func<Func<string, Dictionary<string, object[]>, int>, bool> func,
+            int timeoutSecond = 0
         )
         {
             using (var connection = new SqlConnection(connectionString))
             {
                 using (var command = connection.CreateCommand())
                 {
+                    if (timeoutSecond != 0)
+                    {
+                        //参考：https://netsystem.jpn.org/t_nary/vb-net/sql-server-%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%A2%E3%82%A6%E3%83%88%E9%96%A2%E9%80%A3%E3%81%AE%E8%A8%AD%E5%AE%9A/
+                        command.CommandTimeout = timeoutSecond; //コマンド実行タイムアウト
+                    }
+
                     // データベースの接続開始
                     connection.Open();
                     SqlTransaction transaction = connection.BeginTransaction();

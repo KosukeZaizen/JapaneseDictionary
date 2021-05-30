@@ -19,6 +19,10 @@ namespace Z_Apps.wrBatch
                 SitemapCountManager.setSitemapCount,
                 1000 * 60 * 60 * 3 // ３時間に１回実行
             );
+
+            // 内部で無限ループするため、startBat関数は用いない。
+            // 内部のループで、15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
+            Task.Run(GoogleData.setPagesData);
         }
 
         private static void startBat(Action action, int interval, int delay = 0)
