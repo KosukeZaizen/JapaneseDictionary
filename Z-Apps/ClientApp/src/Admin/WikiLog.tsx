@@ -8,6 +8,7 @@ interface WikiLog {
 }
 
 const tdStyle = { border: "solid", padding: 5 };
+const thStyle = { border: "solid", padding: 5, backgroundColor: "ivory" };
 
 export default function WikiLog() {
     const [logs, setLogs] = useState<WikiLog[]>([]);
@@ -22,13 +23,19 @@ export default function WikiLog() {
     return (
         <>
             <h2>Wiki Log</h2>
-            <table style={{ marginTop: 20, fontSize: "large" }}>
+            <table
+                style={{
+                    marginTop: 20,
+                    fontSize: "large",
+                    whiteSpace: "nowrap",
+                }}
+            >
                 <thead>
                     <tr>
-                        <th>procType</th>
-                        <th>term</th>
-                        <th>startTime</th>
-                        <th>endTime</th>
+                        <th style={thStyle}>procType</th>
+                        <th style={thStyle}>term</th>
+                        <th style={thStyle}>startTime</th>
+                        <th style={thStyle}>endTime</th>
                     </tr>
                 </thead>
                 <tbody>

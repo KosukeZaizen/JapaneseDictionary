@@ -5,10 +5,8 @@ import ScrollMemory from "react-router-scroll-memory";
 import { AppToMount } from "..";
 import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { ReturnToLocalMenu } from "../LocalDebug/LocalDebugMenu";
-import FooterAnimation from "../sharedComponents/Animations/FooterAnimation";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
 import { Helmet } from "../sharedComponents/Helmet";
-import { PopupAd } from "../sharedComponents/YouTubeAd/Popup";
 import { APP_VERSION } from "../version";
 
 const NotFound = lazy(() => import("../sharedComponents/404"));
@@ -53,8 +51,6 @@ function App() {
                     <Route component={NotFoundRedirect} />
                 </Switch>
             </Suspense>
-            <FooterAnimation />
-            <PopupAd />
         </div>
     );
 }

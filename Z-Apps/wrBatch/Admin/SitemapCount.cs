@@ -46,7 +46,7 @@ namespace Z_Apps.wrBatch
             counts.Add(new SitemapCount()
             {
                 lang = lang,
-                time = DateTime.Now,
+                time = Time.GetJapaneseDateTime(),
                 category =
                     sitemapEn.Split(hostUrl + "/category/").Length - 1,
                 word =
