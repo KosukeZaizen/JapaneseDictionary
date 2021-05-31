@@ -31,6 +31,7 @@ namespace Z_Apps.wrBatch
                         catch (Exception ex)
                         {
                             ErrorLog.InsertErrorLog(ex.Message);
+                            await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
                     }
                 }
@@ -38,6 +39,7 @@ namespace Z_Apps.wrBatch
                 {
                     ErrorLog.InsertErrorLog(ex.Message);
                 }
+                await Task.Delay(1000 * 60 * 60 * 24); // １日待機（wordsToRegisterの状況が変わるまで時間がかかるため）
             }
         }
 
