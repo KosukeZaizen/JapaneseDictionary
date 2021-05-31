@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Data;
 using System.Text;
+using System.Web;
 
 namespace Z_Apps.wrBatch
 {
@@ -26,7 +27,7 @@ namespace Z_Apps.wrBatch
                     {
                         try
                         {
-                            await RegisterWordAndCategory(word);
+                            await RegisterRelatedPages(word);
                         }
                         catch (Exception ex)
                         {
@@ -41,19 +42,23 @@ namespace Z_Apps.wrBatch
             }
         }
 
-        private static async Task RegisterWordAndCategory(string word)
+        private static async Task RegisterRelatedPages(string word)
         {
+            // Wikipedia APIからカテゴリの取得
             var category = await GetCategory(word);
             if (string.IsNullOrEmpty(category))
             {
                 return;
             }
+
+            // Google APIから関連サイトの取得
             var googleResultItems = (await GetGoogleResult(word)).items;
             if (googleResultItems == null || googleResultItems.Count() <= 5)
             {
                 return;
             }
 
+            // トランザクションを張り、データの登録
             new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
                 {
                     try
@@ -120,8 +125,7 @@ namespace Z_Apps.wrBatch
 
             //POST送信する文字列を作成
             string encodedWord =
-                        System.Web
-                        .HttpUtility
+                        HttpUtility
                         .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
 
             return url +
@@ -135,8 +139,11 @@ namespace Z_Apps.wrBatch
 
         private static async Task<string> GetCategory(string word)
         {
+            var encodedWord = HttpUtility
+                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
+
             var xml = await Fetch.GetAsync(
-                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={word}"
+                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
             );
 
             XElement xmlTree = XElement.Parse(xml);
