@@ -4,14 +4,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Z_Apps.Util;
 using System.Web;
+using System.Linq;
 
 namespace Z_Apps.Models.SystemBase
 {
     public class SiteMapService
     {
         // アプリ追加時は、hostNamesに新しいドメインを追加する
-        public Dictionary<string, string> hostNames = new Dictionary<string, string>(){
+        public static readonly Dictionary<string, string> hostNames = new Dictionary<string, string>(){
             {"dictionary", "dictionary.lingual-ninja.com"},
+            {"pagesAboutJapan", "japan.lingual-ninja.com"},
             {"local", "localhost"}
         };
 
@@ -52,6 +54,11 @@ namespace Z_Apps.Models.SystemBase
                 {
                     // Japanese Dictionary
                     lstSitemap = GetJapaneseDictionarySitemap();
+                }
+                else if (url == hostNames["pagesAboutJapan"])
+                {
+                    // ローカルでのデバッグ時
+                    lstSitemap = GetPagesAboutJapanSitemap();
                 }
                 else if (url == hostNames["local"])
                 {
@@ -103,6 +110,38 @@ namespace Z_Apps.Models.SystemBase
                                         + encodedWord;
 
                 lstSitemap.Add(dicWordId);
+            }
+
+            return lstSitemap;
+        }
+
+        private List<Dictionary<string, string>> GetPagesAboutJapanSitemap()
+        {
+            var lstSitemap = new List<Dictionary<string, string>>();
+
+            //top page (noindexのためコメントアウト)
+            var dic1 = new Dictionary<string, string>();
+            dic1["loc"] = "https://japan.lingual-ninja.com";
+            lstSitemap.Add(dic1);
+
+            //各ページ
+            IEnumerable<string> allWords =
+                        new DBCon(DBCon.DBType.wiki_db)
+                            .ExecuteSelect("select word from pajWords;")
+                            .Select(r => (string)r["word"]);
+
+            foreach (string word in allWords)
+            {
+                var encodedWord = HttpUtility
+                                    .UrlEncode(word, Encoding.UTF8)
+                                    .Replace("+", "%20");
+
+                lstSitemap.Add(new Dictionary<string, string>(){
+                    {
+                        "loc",
+                        $"https://japan.lingual-ninja.com/p/{encodedWord}"
+                    }
+                });
             }
 
             return lstSitemap;

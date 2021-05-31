@@ -18,8 +18,6 @@ export default function SitemapCount() {
         void load();
     }, []);
 
-    console.log("window.innerWidth", window.innerWidth);
-
     return (
         <>
             <h2>Sitemap Count</h2>
@@ -31,8 +29,12 @@ export default function SitemapCount() {
                         margin: 10,
                         padding: 20,
                         backgroundColor:
-                            s.lang === "ja" ? "blanchedalmond" : "lightcyan",
-                        width: window.innerWidth > 600 ? "40%" : undefined,
+                            s.lang === "ja"
+                                ? "blanchedalmond"
+                                : s.lang === "en"
+                                ? "lightcyan"
+                                : "lightgreen",
+                        width: window.innerWidth > 600 ? "30%" : undefined,
                         display: "inline-block",
                     }}
                 >

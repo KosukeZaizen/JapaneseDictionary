@@ -64,13 +64,19 @@ namespace Z_Apps.wrBatch
                 {
                     try
                     {
-                        // 単語の登録
+                        // 単語の削除・登録
+                        execUpdate(
+                            "delete from pajWords where word = @word;",
+                            new Dictionary<string, object[]> {
+                                { "@word", new object[2] { SqlDbType.NVarChar, word } },
+                            }
+                        );
                         var wordResultCount = execUpdate(
                             @"insert into pajWords(word,category)
                             values (@word,@category);",
                             new Dictionary<string, object[]> {
-                            { "@word", new object[2] { SqlDbType.NVarChar, word } },
-                            { "@category", new object[2] { SqlDbType.NVarChar, category } },
+                                { "@word", new object[2] { SqlDbType.NVarChar, word } },
+                                { "@category", new object[2] { SqlDbType.NVarChar, category } },
                             }
                         );
                         if (wordResultCount != 1)
@@ -78,7 +84,13 @@ namespace Z_Apps.wrBatch
                             return false;
                         }
 
-                        // 単語に対するGoogle検索結果の登録
+                        // 単語に対するGoogle検索結果の削除・登録
+                        execUpdate(
+                            "delete from pajRelatedPages where relatedWord = @relatedWord;",
+                            new Dictionary<string, object[]> {
+                                { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } },
+                            }
+                        );
                         foreach (var article in googleResultItems)
                         {
                             var pageResultCount = execUpdate(
@@ -203,8 +215,16 @@ namespace Z_Apps.wrBatch
             var finishedWords = GetAlreadyFinishedWords();
 
             // 未登録の単語
-            return japaneseWords
+            var remainingWords = japaneseWords
                     .Where(w => !finishedWords.Contains(w));
+
+            if (remainingWords.Count() <= 0)
+            {
+                // 既に全ての単語のデータを取得済みの場合
+                // 過去のデータをもう一度アップデートする
+                return finishedWords;
+            }
+            return remainingWords;
         }
 
         private static IEnumerable<string> GetCachedJapanesePage()

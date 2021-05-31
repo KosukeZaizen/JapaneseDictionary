@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Z_Apps.Models;
 using Z_Apps.Util;
+using Z_Apps.Models.SystemBase;
 
 namespace Z_Apps.wrBatch
 {
@@ -31,6 +32,34 @@ namespace Z_Apps.wrBatch
                 "https://wiki-jp.lingual-ninja.com",
                 "RelatedArticlesCacheJp"
             );
+
+            setPagesAboutJapanSitemap();
+
+            counts = counts
+                        .OrderByDescending(c => c.time)
+                        .Where((c, i) => i <= 60)
+                        .ToList();
+        }
+
+        private static void setPagesAboutJapanSitemap()
+        {
+            //各ページ
+            var allWords =
+                new DBCon(DBCon.DBType.wiki_db)
+                    .ExecuteSelect("select word, category from pajWords;");
+
+            counts.Add(new SitemapCount()
+            {
+                lang = "PagesAboutJapan",
+                time = Time.GetJapaneseDateTime(),
+                category =
+                    allWords
+                        .Select(r => (string)r["category"])
+                        .Distinct()
+                        .Count(),
+                word = allWords.Count(),
+                cached = 0
+            });
         }
 
         private static async Task setEachSitemap(string lang, string hostUrl, string table)
@@ -53,11 +82,6 @@ namespace Z_Apps.wrBatch
                     sitemapEn.Split(hostUrl + "/word/").Length - 1,
                 cached = (int)cached["cnt"]
             });
-
-            counts = counts
-                        .OrderByDescending(c => c.time)
-                        .Where((c, i) => i <= 30)
-                        .ToList();
         }
 
         private static async Task<string> fetchSitemaps(string hostUrl)

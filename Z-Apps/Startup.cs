@@ -78,7 +78,7 @@ namespace Z_Apps
                 {
                     context.Response.Headers.Add("Content-Type", "application/xml");
 
-                    var hostName = siteMapService
+                    var hostName = SiteMapService
                                     .hostNames
                                     .FirstOrDefault(
                                         h => context
