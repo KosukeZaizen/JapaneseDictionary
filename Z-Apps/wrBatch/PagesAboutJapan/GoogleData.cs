@@ -12,7 +12,6 @@ using System.Web;
 
 namespace Z_Apps.wrBatch
 {
-
     public class GoogleData
     {
         public static async void setPagesData()

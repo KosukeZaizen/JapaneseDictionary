@@ -86,7 +86,7 @@ class NavMenu extends React.Component<
                                 className="z-apps-title text-light"
                             >
                                 <span style={{ whiteSpace: "nowrap" }}>
-                                    Lingual Ninja
+                                    Pages about Japan
                                 </span>
                             </b>
                         </NavbarBrand>

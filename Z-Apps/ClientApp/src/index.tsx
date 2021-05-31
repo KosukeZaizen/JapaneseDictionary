@@ -15,6 +15,7 @@ import "./css/index.css";
 import { appToMount as JapaneseDictionary } from "./JapaneseDictionary/App";
 import configureStore from "./JapaneseDictionary/store/configureStore";
 import { appToMount as LocalDebugMenu } from "./LocalDebug/LocalDebugMenu";
+import { appToMount as PagesAboutJapan } from "./PagesAboutJapan/App";
 //import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
 
@@ -54,7 +55,12 @@ export interface AppToMount {
 }
 
 // アプリ追加時は、この配列に追加
-export const apps: AppToMount[] = [JapaneseDictionary, Admin, LocalDebugMenu];
+export const apps: AppToMount[] = [
+    JapaneseDictionary,
+    PagesAboutJapan,
+    Admin,
+    LocalDebugMenu,
+];
 const appObject = apps.find(a => window.location.hostname.includes(a.hostname));
 
 if (appObject?.key === "LocalDebugMenu") {
