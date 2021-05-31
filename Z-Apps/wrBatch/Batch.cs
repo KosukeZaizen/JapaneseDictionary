@@ -9,20 +9,32 @@ namespace Z_Apps.wrBatch
     {
         public static void runAsync()
         {
+#if DEBUG
+#else
+            //----------------------------------------------------
+            // ↓デバッグでは実行しないバッチ↓
+            //----------------------------------------------------
+
+            // API Cacheの古いデータ削除
             startBat(
                 ApiCache.DeleteOldCache,
                 1000 * 60 * 60 * 24, // 毎日実行
                 1000 * 60 * 60 * 5 //デプロイ後５時間待機
             );
 
+            // Pages about Japanのページ取得バッチ
+            // 内部で無限ループするため、startBat関数は用いない。
+            // 内部のループで、15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
+            Task.Run(GoogleData.setPagesData);
+#endif
+
+            //----------------------------------------------------
+            // ↓デバッグでも実行するバッチ↓
+            //----------------------------------------------------
             startBat(
                 SitemapCountManager.setSitemapCount,
                 1000 * 60 * 60 * 3 // ３時間に１回実行
             );
-
-            // 内部で無限ループするため、startBat関数は用いない。
-            // 内部のループで、15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
-            Task.Run(GoogleData.setPagesData);
         }
 
         private static void startBat(Action action, int interval, int delay = 0)

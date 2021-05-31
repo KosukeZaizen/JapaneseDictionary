@@ -42,7 +42,6 @@ export default function Top({ location }: Props) {
                         border: "5px double #333333",
                         margin: "20px 0",
                         padding: "10px",
-                        fontWeight: "bold",
                     }}
                 >
                     <div
@@ -50,6 +49,7 @@ export default function Top({ location }: Props) {
                             fontSize: "x-large",
                             textAlign: "center",
                             marginBottom: 5,
+                            fontWeight: "bold",
                         }}
                     >
                         {"Contents"}
