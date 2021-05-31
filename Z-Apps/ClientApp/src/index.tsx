@@ -13,11 +13,11 @@ import { checkAppVersion } from "./common/functions";
 import { GOOGLE_ANALYTICS } from "./common/privateConsts";
 import "./css/index.css";
 import { appToMount as JapaneseDictionary } from "./JapaneseDictionary/App";
-import configureStore from "./JapaneseDictionary/store/configureStore";
 import { appToMount as LocalDebugMenu } from "./LocalDebug/LocalDebugMenu";
 import { appToMount as PagesAboutJapan } from "./PagesAboutJapan/App";
 //import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
+import configureStore from "./store/configureStore";
 
 //AzureUrlから通常のURLへリダイレクト
 if (window.location.href.includes(azureUrl)) {

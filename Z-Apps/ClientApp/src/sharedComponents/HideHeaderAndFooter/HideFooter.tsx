@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as baseStore from "../../JapaneseDictionary/store/BaseStore";
+import * as baseStore from "../../store/BaseStore";
 
 export const HideFooter = connect(null, dispatch =>
     bindActionCreators(baseStore.actionCreators, dispatch)

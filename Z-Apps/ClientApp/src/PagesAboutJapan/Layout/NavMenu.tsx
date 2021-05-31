@@ -81,14 +81,16 @@ class NavMenu extends React.Component<
                 >
                     <Container>
                         <NavbarBrand tag={Link} to="/">
-                            <b
-                                onClick={this.closeToggle}
+                            <span
+                                style={{
+                                    whiteSpace: "nowrap",
+                                    fontWeight: "bold",
+                                }}
                                 className="z-apps-title text-light"
+                                onClick={this.closeToggle}
                             >
-                                <span style={{ whiteSpace: "nowrap" }}>
-                                    Pages about Japan
-                                </span>
-                            </b>
+                                Pages about Japan
+                            </span>
                         </NavbarBrand>
                         <NavbarToggler onClick={this.toggle} className="mr-2" />
                         <Collapse

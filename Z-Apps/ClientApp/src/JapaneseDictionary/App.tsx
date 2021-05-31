@@ -7,9 +7,9 @@ import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { ReturnToLocalMenu } from "../LocalDebug/LocalDebugMenu";
 import FooterAnimation from "../sharedComponents/Animations/FooterAnimation";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
-import Layout from "../sharedComponents/Layout";
 import { PopupAd } from "../sharedComponents/YouTubeAd/Popup";
 import { APP_VERSION } from "../version";
+import Layout from "./Layout/Layout";
 
 const Dictionary = lazy(() => import("./Dictionary"));
 const DictionaryTop = lazy(() => import("./Dictionary/Top"));
