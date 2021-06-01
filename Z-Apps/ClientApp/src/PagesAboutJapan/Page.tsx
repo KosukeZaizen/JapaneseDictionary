@@ -7,6 +7,7 @@ import { cFetch } from "../common/util/cFetch";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
 import { HashScroll } from "../sharedComponents/HashScroll";
 import Helmet from "../sharedComponents/Helmet";
+import { YouTubeAd } from "../sharedComponents/YouTubeAd";
 
 interface RelatedPage {
     pageName: string;
@@ -23,17 +24,19 @@ interface Props {
 export default function Page({
     location,
     match: {
-        params: { word },
+        params: { word: originalWord },
     },
 }: Props) {
     const [pages, setPages] = useState<RelatedPage[]>([]);
 
     useEffect(() => {
         const load = async () => {
-            setPages(await fetchRelatedPages(word));
+            setPages(await fetchRelatedPages(originalWord));
         };
         void load();
     }, []);
+
+    const word = originalWord.split("%3A").join(":");
 
     const desc = `Pages about ${word}.
 Visit the pages below to learn about ${word}.`;
@@ -66,6 +69,9 @@ Visit the pages below to learn about ${word}.`;
                 </Card>
             ))}
             {pages.length <= 0 && <ShurikenProgress size="20%" />}
+            <aside style={{ maxWidth: 400, marginTop: 15 }}>
+                <YouTubeAd />
+            </aside>
             <HashScroll location={location} allLoadFinished={true} />
         </>
     );
