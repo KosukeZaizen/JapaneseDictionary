@@ -39,15 +39,11 @@ namespace Z_Apps
                 configuration.RootPath = "ClientApp/build";
             });
 
-            var con = new DBCon();
-
-            services.AddSingleton(con);
             services.AddSingleton(new SiteMapService());
-            services.AddSingleton(new StoriesService(con));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DBCon con, SiteMapService siteMapService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SiteMapService siteMapService)
         {
 
             if (env.IsDevelopment())
@@ -138,7 +134,7 @@ namespace Z_Apps
                                     "<body>Content for SNS bot</body></html>";
                         }
 
-                        var clientLogService = new ClientLogService(con);
+                        var clientLogService = new ClientLogService();
                         clientLogService.RegisterLog(new ClientOpeLog()
                         {
                             url = url,

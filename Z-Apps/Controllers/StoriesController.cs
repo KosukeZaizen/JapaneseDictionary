@@ -11,9 +11,9 @@ namespace Z_Apps.Controllers
     public class StoriesController : Controller
     {
         private StoriesService storiesService;
-        public StoriesController(StoriesService storiesService)
+        public StoriesController()
         {
-            this.storiesService = storiesService;
+            this.storiesService = new StoriesService();
         }
 
 

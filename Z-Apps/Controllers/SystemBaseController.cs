@@ -12,9 +12,9 @@ namespace Z_Apps.Controllers
     {
         private ClientLogService clientLogService;
         private VersionService versionService;
-        public SystemBaseController(DBCon con)
+        public SystemBaseController()
         {
-            clientLogService = new ClientLogService(con);
+            clientLogService = new ClientLogService();
             versionService = new VersionService();
         }
 

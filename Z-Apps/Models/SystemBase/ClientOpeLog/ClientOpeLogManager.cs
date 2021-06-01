@@ -7,11 +7,6 @@ namespace Z_Apps.Models.SystemBase
     public class ClientOpeLogManager
     {
         private const int logRemainingDays = 1000;
-        private readonly DBCon con;
-        public ClientOpeLogManager(DBCon con)
-        {
-            this.con = con;
-        }
 
         public bool InsertLog(ClientOpeLog log)
         {
@@ -74,7 +69,7 @@ values (@time, @url, @operationName, @userId, @parameters);
 
         public void DeleteOldLogs()
         {
-            var logService = new ClientLogService(con);
+            var logService = new ClientLogService();
             try
             {
                 var wikiCon = new DBCon(DBCon.DBType.wiki_db);
@@ -109,12 +104,12 @@ delete from ZAppsClientOpeLog
 
         public void DeleteAdminLogs()
         {
-            var logService = new ClientLogService(con);
+            var logService = new ClientLogService();
             try
             {
                 var wikiCon = new DBCon(DBCon.DBType.wiki_db);
 
-                var clientManager = new ClientManager(con);
+                var clientManager = new ClientManager();
                 var allClients = clientManager.GetAllClients();
 
                 foreach (var client in allClients)
@@ -131,7 +126,7 @@ delete from ZAppsClientOpeLog
                         });
                     }
                 }
-                
+
                 logService.RegisterLog(new ClientOpeLog()
                 {
                     url = "wrBatch",

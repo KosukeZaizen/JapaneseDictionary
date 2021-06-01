@@ -10,9 +10,9 @@ namespace Z_Apps.Models.Stories
     {
         private readonly StoryManager storyManager;
 
-        public StoriesService(DBCon con)
+        public StoriesService()
         {
-            storyManager = new StoryManager(con);
+            storyManager = new StoryManager();
         }
 
         public IEnumerable<Story> GetAllStories()

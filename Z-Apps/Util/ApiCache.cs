@@ -222,7 +222,7 @@ namespace Z_Apps.Util
                     }
                 }
             }
-            var logService = new ClientLogService(new DBCon());
+            var logService = new ClientLogService();
             logService.RegisterLog(new ClientOpeLog()
             {
                 url = "ApiCache",

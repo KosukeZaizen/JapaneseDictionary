@@ -1,17 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Z_Apps.Models.SystemBase
 {
     public class ClientManager
     {
-        private readonly DBCon Con;
-        public ClientManager(DBCon con)
-        {
-            Con = con;
-        }
-
         public IEnumerable<Client> GetAllClients()
         {
             //SQL文作成
@@ -20,7 +12,7 @@ namespace Z_Apps.Models.SystemBase
   FROM tblClientMst
 ";
 
-            var dics = Con.ExecuteSelect(sql, null);
+            var dics = new DBCon().ExecuteSelect(sql, null);
 
             var result = new List<Client>();
             foreach (var dic in dics)

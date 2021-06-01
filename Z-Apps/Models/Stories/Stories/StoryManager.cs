@@ -5,9 +5,9 @@ namespace Z_Apps.Models.Stories.Stories
     public class StoryManager
     {
         private readonly DBCon Con;
-        public StoryManager(DBCon con)
+        public StoryManager()
         {
-            Con = con;
+            Con = new DBCon(DBCon.DBType.z_apps);
         }
 
         public IEnumerable<Story> GetAllStories()
