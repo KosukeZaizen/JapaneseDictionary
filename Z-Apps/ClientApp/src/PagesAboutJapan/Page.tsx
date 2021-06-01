@@ -20,6 +20,13 @@ interface RelatedPage {
     explanation: string;
 }
 
+interface Category {
+    category: string;
+    words: string[];
+}
+
+const initialCategory: Category = { category: "", words: [] };
+
 interface Props {
     location: Location;
     match: { params: { word: string } };
@@ -32,13 +39,18 @@ export default function Page({
     },
 }: Props) {
     const [pages, setPages] = useState<RelatedPage[]>([]);
+    const [category, setCategory] = useState(initialCategory);
 
     useEffect(() => {
+        setPages([]);
+        setCategory(initialCategory);
+
         const load = async () => {
             setPages(await fetchRelatedPages(originalWord));
+            setCategory(await fetchSameCategoryWords(originalWord));
         };
         void load();
-    }, []);
+    }, [originalWord]);
 
     const word = originalWord.split("%3A").join(":");
 
@@ -63,7 +75,7 @@ Visit the pages below to learn about ${word}.`;
             </p>
 
             {pages.map(p => (
-                <Card body style={{ marginTop: 20 }}>
+                <Card body style={{ marginTop: 20 }} key={p.link}>
                     <CardTitle tag="h2" style={{ marginBottom: 15 }}>
                         {p.pageName}
                     </CardTitle>
@@ -79,6 +91,27 @@ Visit the pages below to learn about ${word}.`;
                     </CardText>
                 </Card>
             ))}
+            {category.words.length > 1 && (
+                <Card body style={{ marginTop: 20 }}>
+                    <CardTitle tag="h2" style={{ marginBottom: 15 }}>
+                        {category.category}
+                    </CardTitle>
+                    <CardText>
+                        {category.words.map((w, i) => (
+                            <span key={w}>
+                                {i !== 0 && " / "}
+                                {w === word ? (
+                                    w
+                                ) : (
+                                    <Link to={`/p/${encodeURIComponent(w)}`}>
+                                        {w}
+                                    </Link>
+                                )}
+                            </span>
+                        ))}
+                    </CardText>
+                </Card>
+            )}
             {pages.length <= 0 && <ShurikenProgress size="20%" />}
             <aside
                 style={{
@@ -95,9 +128,9 @@ Visit the pages below to learn about ${word}.`;
     );
 }
 
-async function fetchRelatedPages(word: string): Promise<RelatedPage[]> {
+async function fetchRelatedPages(word: string) {
     try {
-        const res = await (
+        const res: RelatedPage[] = await (
             await cFetch(`api/PagesAboutJapan/GetPageData/${word}`)
         ).json();
 
@@ -107,4 +140,17 @@ async function fetchRelatedPages(word: string): Promise<RelatedPage[]> {
     } catch (ex) {}
     reloadAndRedirect_OneTimeReload("pagesAboutJapan-relatedPages");
     return [];
+}
+
+async function fetchSameCategoryWords(word: string) {
+    try {
+        const res: Category = await (
+            await cFetch(`api/PagesAboutJapan/GetSameCategoryWords/${word}`)
+        ).json();
+
+        if (res?.category && Array.isArray(res?.words)) {
+            return res;
+        }
+    } catch (ex) {}
+    return initialCategory;
 }

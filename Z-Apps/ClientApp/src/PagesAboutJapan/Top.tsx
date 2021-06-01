@@ -23,7 +23,7 @@ interface Props {
 
 const title = "Pages about Japan";
 const desc = `Website to introduce articles about Japan.
-You can know about Japan regarding many topics.`;
+You can learn about Japan with many topics.`;
 
 export default function Top({ location }: Props) {
     const [categories, setCategories] = useState<Category[]>([]);

@@ -20,6 +20,18 @@ namespace Z_Apps.Controllers
         [HttpGet("[action]")]
         public IEnumerable<Category> GetTopData()
         {
+            return GetAllCategoriesWithWords();
+        }
+
+        [HttpGet("[action]/{word}")]
+        public Category GetSameCategoryWords(string word)
+        {
+            return GetAllCategoriesWithWords()
+                .FirstOrDefault(c => c.words.Contains(word));
+        }
+
+        private IEnumerable<Category> GetAllCategoriesWithWords()
+        {
             return ApiCache
                 .UseCache("p", () =>
                 {
