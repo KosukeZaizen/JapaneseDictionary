@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Breadcrumb from "reactstrap/lib/Breadcrumb";
+import BreadcrumbItem from "reactstrap/lib/BreadcrumbItem";
 import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
 import CardTitle from "reactstrap/lib/CardTitle";
 import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { cFetch } from "../common/util/cFetch";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
+import FB from "../sharedComponents/FaceBook";
 import { HashScroll } from "../sharedComponents/HashScroll";
 import Helmet from "../sharedComponents/Helmet";
 import { YouTubeAd } from "../sharedComponents/YouTubeAd";
@@ -45,7 +49,14 @@ Visit the pages below to learn about ${word}.`;
         <>
             <Helmet title={word} desc={desc} />
 
-            <h1>{word}</h1>
+            <Breadcrumb>
+                <BreadcrumbItem>
+                    <Link to="/">Home</Link>
+                </BreadcrumbItem>
+                <BreadcrumbItem active>{word}</BreadcrumbItem>
+            </Breadcrumb>
+
+            <h1 style={{ marginTop: 20 }}>{word}</h1>
 
             <p style={{ whiteSpace: "pre-wrap", margin: "20px 0 30px" }}>
                 {desc}
@@ -69,9 +80,16 @@ Visit the pages below to learn about ${word}.`;
                 </Card>
             ))}
             {pages.length <= 0 && <ShurikenProgress size="20%" />}
-            <aside style={{ maxWidth: 400, marginTop: 15 }}>
+            <aside
+                style={{
+                    maxWidth: 400,
+                    marginTop: 15,
+                    marginBottom: 15,
+                }}
+            >
                 <YouTubeAd />
             </aside>
+            <FB style={{ display: "inline" }} />
             <HashScroll location={location} allLoadFinished={true} />
         </>
     );

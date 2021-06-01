@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Breadcrumb from "reactstrap/lib/Breadcrumb";
+import BreadcrumbItem from "reactstrap/lib/BreadcrumbItem";
 import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
 import CardTitle from "reactstrap/lib/CardTitle";
 import { cFetch } from "../common/util/cFetch";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
+import FB from "../sharedComponents/FaceBook";
 import { HashScroll } from "../sharedComponents/HashScroll";
 import Helmet from "../sharedComponents/Helmet";
+import { YouTubeAd } from "../sharedComponents/YouTubeAd";
 
 interface Category {
     category: string;
@@ -34,7 +38,12 @@ export default function Top({ location }: Props) {
     return (
         <article>
             <Helmet title={title} desc={desc} isHome />
-            <h1>{title}</h1>
+
+            <Breadcrumb>
+                <BreadcrumbItem active>Home</BreadcrumbItem>
+            </Breadcrumb>
+
+            <h1 style={{ marginTop: 20 }}>{title}</h1>
             <p style={{ whiteSpace: "pre-wrap", marginTop: 20 }}>{desc}</p>
             <div>
                 <div
@@ -98,6 +107,16 @@ export default function Top({ location }: Props) {
                     </Card>
                 ))}
             </div>
+            <aside
+                style={{
+                    maxWidth: 400,
+                    marginTop: 15,
+                    marginBottom: 15,
+                }}
+            >
+                <YouTubeAd />
+            </aside>
+            <FB style={{ display: "inline" }} />
             <HashScroll
                 location={location}
                 allLoadFinished={categories.length > 0}
