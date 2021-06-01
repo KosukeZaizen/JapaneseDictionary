@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 interface SitemapCount {
-    lang: "ja" | "en";
+    lang: "ja" | "en" | "PagesAboutJapan";
     time: string;
     category: number;
     word: number;
