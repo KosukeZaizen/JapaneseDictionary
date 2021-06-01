@@ -39,7 +39,7 @@ namespace Z_Apps.Util
                 Cache.ContainsKey(strClassName)
                 && Cache[strClassName].ContainsKey(strMethodName)
                 && Cache[strClassName][strMethodName].ContainsKey(param)
-                )
+            )
             {
                 //キャッシュ登録済み
                 Task.Run(async () =>

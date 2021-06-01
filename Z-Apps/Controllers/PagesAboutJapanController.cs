@@ -83,22 +83,23 @@ namespace Z_Apps.Controllers
                 return new List<RelatedPage>();
             }
 
-            return new DBCon(DBCon.DBType.wiki_db)
-                        .ExecuteSelect(@"
-                            select pageName, relatedWord, link, explanation
-                            from pajRelatedPages
-                            where relatedWord = @relatedWord;",
-                            new Dictionary<string, object[]> {
-                                { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } }
-                            }
-                        )
-                        .Select(r => new RelatedPage()
-                        {
-                            pageName = (string)r["pageName"],
-                            relatedWord = (string)r["relatedWord"],
-                            link = (string)r["link"],
-                            explanation = (string)r["explanation"]
-                        });
+            return ApiCache
+                .UseCache(word, () => new DBCon(DBCon.DBType.wiki_db)
+                    .ExecuteSelect(@"
+                        select pageName, relatedWord, link, explanation
+                        from pajRelatedPages
+                        where relatedWord = @relatedWord;",
+                        new Dictionary<string, object[]> {
+                            { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } }
+                        }
+                    )
+                    .Select(r => new RelatedPage()
+                    {
+                        pageName = (string)r["pageName"],
+                        relatedWord = (string)r["relatedWord"],
+                        link = (string)r["link"],
+                        explanation = (string)r["explanation"]
+                    }));
         }
     }
 }
