@@ -1,3 +1,4 @@
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace Z_Apps.wrBatch
                             ErrorLog.InsertErrorLog(ex.Message);
                             await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
+                        await Task.Delay(1000 * 60);
                     }
                 }
                 catch (Exception ex)
@@ -152,6 +154,8 @@ namespace Z_Apps.wrBatch
 
         private static async Task<string> GetCategory(string word)
         {
+            var categoriesCount = GetCategoriesCount();
+
             var encodedWord = HttpUtility
                         .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
 
@@ -165,9 +169,11 @@ namespace Z_Apps.wrBatch
             var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
             var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
 
-            var filteredCategories = categories
+            var cats = categories
                 .Elements()
-                .Select(c => c.Attribute("title").Value.Replace("Category:", ""))
+                .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+
+            var filteredCategories = cats
                 .Where(c =>
                     {
                         string lower = c.ToLower();
@@ -180,7 +186,16 @@ namespace Z_Apps.wrBatch
                                 !lower.Contains("wikidata");
                     }
                 )
-                .OrderBy(c => c.Length);
+                .OrderByDescending(c =>
+                {
+                    var categoryCount = categoriesCount
+                                            .FirstOrDefault(cc => cc.category == c);
+                    if (categoryCount == null)
+                    {
+                        return 0;
+                    }
+                    return categoryCount.count;
+                });
 
             var categoryWithoutNumber = filteredCategories
                                         .FirstOrDefault(c => !c.Contains("0") &&
@@ -202,6 +217,27 @@ namespace Z_Apps.wrBatch
             return filteredCategories.FirstOrDefault();
         }
 
+        public class CategoryCount
+        {
+            public string category { get; set; }
+            public int count { get; set; }
+        }
+        private static IEnumerable<CategoryCount> GetCategoriesCount()
+        {
+            return new DBCon(DBCon.DBType.wiki_db)
+                    .ExecuteSelect(@"
+select category, count(word) as cnt
+from pajWords
+group by category
+order by cnt desc;"
+                    )
+                    .Select(r => new CategoryCount()
+                    {
+                        category = (string)r["category"],
+                        count = (int)r["cnt"]
+                    });
+        }
+
         private static IEnumerable<string> GetWordsToRegister()
         {
             // 「Japan Info」側にある、全ての日本に関する単語を取得
@@ -214,17 +250,13 @@ namespace Z_Apps.wrBatch
             // 既に「Pages about Japan」側にデータ取得済みの単語を取得
             var finishedWords = GetAlreadyFinishedWords();
 
-            // 未登録の単語
-            var remainingWords = japaneseWords
-                    .Where(w => !finishedWords.Contains(w));
-
-            if (remainingWords.Count() <= 0)
-            {
-                // 既に全ての単語のデータを取得済みの場合
-                // 過去のデータをもう一度アップデートする
-                return finishedWords;
-            }
-            return remainingWords;
+            // 未登録の単語を先に
+            return japaneseWords
+                    .OrderBy(w =>
+                        finishedWords.Contains(w)
+                            ? 1
+                            : 0
+                    );
         }
 
         private static IEnumerable<string> GetCachedJapanesePage()
