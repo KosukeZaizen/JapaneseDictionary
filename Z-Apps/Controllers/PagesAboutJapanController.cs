@@ -83,8 +83,7 @@ namespace Z_Apps.Controllers
                 return new List<RelatedPage>();
             }
 
-            return ApiCache
-                .UseCache(word, () => new DBCon(DBCon.DBType.wiki_db)
+            return new DBCon(DBCon.DBType.wiki_db)
                     .ExecuteSelect(@"
                         select pageName, relatedWord, link, explanation
                         from pajRelatedPages
@@ -99,7 +98,7 @@ namespace Z_Apps.Controllers
                         relatedWord = (string)r["relatedWord"],
                         link = (string)r["link"],
                         explanation = (string)r["explanation"]
-                    }));
+                    });
         }
     }
 }

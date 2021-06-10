@@ -20,17 +20,14 @@ namespace Z_Apps.Controllers
         [HttpGet("[action]/{storyId?}")]
         public IEnumerable<Story> GetOtherStories(int storyId)
         {
-            return ApiCache.UseCache(storyId.ToString(), () =>
+            if (storyId > 0)
             {
-                if (storyId > 0)
-                {
-                    return storiesService.GetOtherStories(storyId);
-                }
-                else
-                {
-                    return null;
-                }
-            });
+                return storiesService.GetOtherStories(storyId);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
