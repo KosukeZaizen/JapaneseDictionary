@@ -87,6 +87,15 @@ namespace Z_Apps
                 }
                 else if (ua.StartsWith("facebookexternalhit") || ua.StartsWith("Twitterbot"))
                 {
+                    var hostName = SiteMapService
+                                    .hostNames
+                                    .FirstOrDefault(
+                                        h => context
+                                            .Request
+                                            .Host
+                                            .Host
+                                            .Contains(h.Value));
+
                     if (url == null)
                     {
                         await next.Invoke();
@@ -100,8 +109,8 @@ namespace Z_Apps
                                 "<head>" +
                                 "<meta name='twitter:card' content='summary'>" + Environment.NewLine +
                                 "<meta name='twitter:site' content='@LingualNinja'>" + Environment.NewLine +
-                                "<meta property='og:image' content='https://dictionary.lingual-ninja.com/ogp-img.png'>" + Environment.NewLine +
-                                "<meta property='og:url' content='https://dictionary.lingual-ninja.com'>" + Environment.NewLine +
+                                "<meta property='og:image' content='https://" + hostName + "/ogp-img.png'>" + Environment.NewLine +
+                                "<meta property='og:url' content='https://" + hostName + "'>" + Environment.NewLine +
                                 "<meta property='og:type' content='website'>" + Environment.NewLine +
                                 "<meta property='og:title' content='Lingual Ninja'>" + Environment.NewLine +
                                 "<meta property='og:image:alt' content='Lingual Ninja'>" + Environment.NewLine +
@@ -119,8 +128,8 @@ namespace Z_Apps
                                     "<head>" +
                                     "<meta name='twitter:card' content='summary'>" + Environment.NewLine +
                                     "<meta name='twitter:site' content='@LingualNinja'>" + Environment.NewLine +
-                                    "<meta property='og:image' content='https://dictionary.lingual-ninja.com/ogp-img.png'>" + Environment.NewLine +
-                                    "<meta property='og:url' content='https://dictionary.lingual-ninja.com" + url + "'>" + Environment.NewLine +
+                                    "<meta property='og:image' content='https://" + hostName + "/ogp-img.png'>" + Environment.NewLine +
+                                    "<meta property='og:url' content='https://" + hostName + url + "'>" + Environment.NewLine +
                                     "<meta property='og:type' content='article'>" + Environment.NewLine +
                                     "<meta property='og:title' content='Lingual Ninja'>" + Environment.NewLine +
                                     "<meta property='og:image:alt' content='Lingual Ninja'>" + Environment.NewLine +
