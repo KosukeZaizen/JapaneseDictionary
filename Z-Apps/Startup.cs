@@ -167,6 +167,7 @@ namespace Z_Apps
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
             });
 
+
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
