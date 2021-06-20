@@ -180,7 +180,7 @@ namespace Z_Apps
                         app.UseSpa(spa =>
                         {
                             spa.Options.SourcePath = "ClientApp";
-                            spa.Options.DefaultPage = $"/{hostName.Key}/index.html";
+                            spa.Options.DefaultPage = $"/index_{hostName.Key}.html";
 
                             if (env.IsDevelopment())
                             {

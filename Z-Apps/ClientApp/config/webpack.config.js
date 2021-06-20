@@ -531,15 +531,16 @@ module.exports = function (webpackEnv) {
         plugins: [
             // Generates an `index.html` file with the <script> injected.
             ...Object.keys(paths)
-                .filter(p => p.includes("appHtml"))
+                .filter(k => k.includes("appHtml"))
                 .map(
-                    p =>
+                    k =>
                         new HtmlWebpackPlugin(
                             Object.assign(
                                 {},
                                 {
                                     inject: true,
-                                    template: paths[p],
+                                    template: paths[k],
+                                    filename: paths[k].replace("/public", ""),
                                 },
                                 isEnvProduction
                                     ? {

@@ -48,10 +48,10 @@ const resolveModule = (resolveFn, filePath) => {
     return resolveFn(`${filePath}.js`);
 };
 
-const apps = ["dictionary", "japan", "local", "admin"].reduce(
+const appHtml = ["dictionary", "japan", "local", "admin"].reduce(
     (acc, val, i) => ({
         ...acc,
-        [`appHtml${i}`]: resolveApp(`public/${val}/index.html`),
+        [`appHtml${i}`]: resolveApp(`public/index_${val}.html`),
     }),
     { appHtml: "public/index.html" }
 );
@@ -62,7 +62,7 @@ module.exports = {
     appPath: resolveApp("."),
     appBuild: resolveApp("build"),
     appPublic: resolveApp("public"),
-    ...apps,
+    ...appHtml,
     appIndexJs: resolveModule(resolveApp, "src/index"),
     appPackageJson: resolveApp("package.json"),
     appSrc: resolveApp("src"),
