@@ -167,16 +167,55 @@ namespace Z_Apps
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
             });
 
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
+            app.MapWhen(
+                context =>
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    return context
+                            .Request
+                            .Host
+                            .Host
+                            .Contains(SiteMapService
+                            .hostNames["local"]);
+                },
+                userApp =>
+                {
+                    app.UseSpa(spa =>
+                    {
+                        spa.Options.SourcePath = "ClientApp";
+                        spa.Options.DefaultPage = "/index.html";
+
+                        if (env.IsDevelopment())
+                        {
+                            spa.UseReactDevelopmentServer(npmScript: "start");
+                        }
+                    });
                 }
-            });
+            );
+
+            app.MapWhen(
+                context =>
+                {
+                    return !context
+                            .Request
+                            .Host
+                            .Host
+                            .Contains(SiteMapService
+                            .hostNames["local"]);
+                },
+                userApp =>
+                {
+                    app.UseSpa(spa =>
+                    {
+                        spa.Options.SourcePath = "ClientApp";
+                        spa.Options.DefaultPage = "/index.html";
+
+                        if (env.IsDevelopment())
+                        {
+                            spa.UseReactDevelopmentServer(npmScript: "start");
+                        }
+                    });
+                }
+            );
         }
     }
 }
