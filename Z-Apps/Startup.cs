@@ -167,55 +167,53 @@ namespace Z_Apps
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
             });
 
-            app.MapWhen(
-                context =>
-                {
-                    return context
-                            .Request
-                            .Host
-                            .Host
-                            .Contains(SiteMapService
-                            .hostNames["local"]);
-                },
-                userApp =>
-                {
-                    app.UseSpa(spa =>
+            foreach (var hostName in SiteMapService.hostNames)
+            {
+                app.MapWhen(
+                    context => context
+                                .Request
+                                .Host
+                                .Host
+                                .Contains(hostName.Value),
+                    userApp =>
                     {
-                        spa.Options.SourcePath = "ClientApp";
-                        spa.Options.DefaultPage = "/index.html";
-
-                        if (env.IsDevelopment())
+                        app.UseSpa(spa =>
                         {
-                            spa.UseReactDevelopmentServer(npmScript: "start");
-                        }
-                    });
-                }
-            );
+                            spa.Options.SourcePath = "ClientApp";
+                            spa.Options.DefaultPage = $"/{hostName.Key}/index.html";
+
+                            if (env.IsDevelopment())
+                            {
+                                spa.UseReactDevelopmentServer(npmScript: "start");
+                            }
+                        });
+                    }
+                );
+            }
 
             app.MapWhen(
-                context =>
-                {
-                    return !context
-                            .Request
-                            .Host
-                            .Host
-                            .Contains(SiteMapService
-                            .hostNames["local"]);
-                },
-                userApp =>
-                {
-                    app.UseSpa(spa =>
+                    context => !SiteMapService
+                                .hostNames.Any(
+                                    s => context
+                                            .Request
+                                            .Host
+                                            .Host
+                                            .Contains(s.Value)
+                                ),
+                    userApp =>
                     {
-                        spa.Options.SourcePath = "ClientApp";
-                        spa.Options.DefaultPage = "/index.html";
-
-                        if (env.IsDevelopment())
+                        app.UseSpa(spa =>
                         {
-                            spa.UseReactDevelopmentServer(npmScript: "start");
-                        }
-                    });
-                }
-            );
+                            spa.Options.SourcePath = "ClientApp";
+                            spa.Options.DefaultPage = $"/local/index.html";
+
+                            if (env.IsDevelopment())
+                            {
+                                spa.UseReactDevelopmentServer(npmScript: "start");
+                            }
+                        });
+                    }
+                );
         }
     }
 }
