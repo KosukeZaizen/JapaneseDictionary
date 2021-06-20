@@ -53,7 +53,7 @@ const appHtml = ["dictionary", "japan", "local", "admin"].reduce(
         ...acc,
         [`appHtml${i}`]: resolveApp(`public/index_${val}.html`),
     }),
-    { appHtml: "public/index.html" }
+    { appHtml: resolveApp("public/index.html") }
 );
 
 // config after eject: we're in ./config/

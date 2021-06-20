@@ -540,7 +540,8 @@ module.exports = function (webpackEnv) {
                                 {
                                     inject: true,
                                     template: paths[k],
-                                    // filename: paths[k].replace("public/", ""),
+                                    filename:
+                                        "index" + paths[k].split("index")[1],
                                 },
                                 isEnvProduction
                                     ? {
