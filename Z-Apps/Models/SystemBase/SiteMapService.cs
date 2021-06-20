@@ -14,7 +14,6 @@ namespace Z_Apps.Models.SystemBase
         public static readonly Dictionary<string, string> hostNames = new Dictionary<string, string>(){
             {"dictionary", "dictionary.lingual-ninja.com"},
             {"pagesAboutJapan", "japan.lingual-ninja.com"},
-            {"admin", "admin.lingual-ninja.com"},
             {"local", "localhost"}
         };
 
@@ -53,10 +52,12 @@ namespace Z_Apps.Models.SystemBase
 
                 if (url == hostNames["dictionary"])
                 {
+                    // Japanese Dictionary
                     lstSitemap = GetJapaneseDictionarySitemap();
                 }
                 else if (url == hostNames["pagesAboutJapan"])
                 {
+                    // ローカルでのデバッグ時
                     lstSitemap = GetPagesAboutJapanSitemap();
                 }
                 else if (url == hostNames["local"])
