@@ -58,9 +58,8 @@ class Dictionary extends React.Component<Props, State> {
                 const res = await cFetch(url);
 
                 const { response, noindex } = await res.json();
-                const { xml, wordId, snippet, translatedWord } = JSON.parse(
-                    response
-                );
+                const { xml, wordId, snippet, translatedWord } =
+                    JSON.parse(response);
 
                 this.setState({
                     wordId,
