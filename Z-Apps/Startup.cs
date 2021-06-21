@@ -167,53 +167,16 @@ namespace Z_Apps
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
             });
 
-            foreach (var hostName in SiteMapService.hostNames)
+            app.UseSpa(spa =>
             {
-                app.MapWhen(
-                    context => context
-                                .Request
-                                .Host
-                                .Host
-                                .Contains(hostName.Value),
-                    userApp =>
-                    {
-                        app.UseSpa(spa =>
-                        {
-                            spa.Options.SourcePath = "ClientApp";
-                            spa.Options.DefaultPage = $"/index_{hostName.Key}.html";
+                spa.Options.SourcePath = "ClientApp";
+                spa.Options.DefaultPage = $"/index.html";
 
-                            if (env.IsDevelopment())
-                            {
-                                spa.UseReactDevelopmentServer(npmScript: "start");
-                            }
-                        });
-                    }
-                );
-            }
-
-            app.MapWhen(
-                    context => !SiteMapService
-                                .hostNames.Any(
-                                    s => context
-                                            .Request
-                                            .Host
-                                            .Host
-                                            .Contains(s.Value)
-                                ),
-                    userApp =>
-                    {
-                        app.UseSpa(spa =>
-                        {
-                            spa.Options.SourcePath = "ClientApp";
-                            spa.Options.DefaultPage = $"/index.html";
-
-                            if (env.IsDevelopment())
-                            {
-                                spa.UseReactDevelopmentServer(npmScript: "start");
-                            }
-                        });
-                    }
-                );
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
         }
     }
 }
