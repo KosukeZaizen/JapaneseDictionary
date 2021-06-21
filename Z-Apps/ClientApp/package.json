@@ -103,7 +103,7 @@
     },
     "scripts": {
         "start": "rimraf ./build && node scripts/start.js",
-        "build": "node ./versionUpdate.js && node scripts/build.js tsc",
+        "build": "node ./versionUpdate.js && node scripts/build.js",
         "test": "cross-env CI=true node scripts/test.js --env=jsdom",
         "lint": "eslint ./src/"
     },

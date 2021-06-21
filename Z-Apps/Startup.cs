@@ -205,7 +205,7 @@ namespace Z_Apps
                         app.UseSpa(spa =>
                         {
                             spa.Options.SourcePath = "ClientApp";
-                            spa.Options.DefaultPage = $"/local/index.html";
+                            spa.Options.DefaultPage = $"/index.html";
 
                             if (env.IsDevelopment())
                             {

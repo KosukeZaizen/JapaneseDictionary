@@ -48,21 +48,13 @@ const resolveModule = (resolveFn, filePath) => {
     return resolveFn(`${filePath}.js`);
 };
 
-const appHtml = ["dictionary", "japan", "local", "admin"].reduce(
-    (acc, val, i) => ({
-        ...acc,
-        [`appHtml${i}`]: resolveApp(`public/index_${val}.html`),
-    }),
-    { appHtml: resolveApp("public/index.html") }
-);
-
 // config after eject: we're in ./config/
 module.exports = {
     dotenv: resolveApp(".env"),
     appPath: resolveApp("."),
     appBuild: resolveApp("build"),
     appPublic: resolveApp("public"),
-    ...appHtml,
+    appHtml: resolveApp("public/index.html"),
     appIndexJs: resolveModule(resolveApp, "src/index"),
     appPackageJson: resolveApp("package.json"),
     appSrc: resolveApp("src"),
