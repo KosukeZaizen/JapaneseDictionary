@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,22 +11,14 @@ namespace Z_Apps.Models.SystemBase
 {
     public class SiteMapService
     {
-        // アプリ追加時は、hostNamesに新しいドメインを追加する
-        public static readonly Dictionary<string, string> hostNames = new Dictionary<string, string>(){
-            {"dictionary", "dictionary.lingual-ninja.com"},
-            {"pagesAboutJapan", "japan.lingual-ninja.com"},
-            {"admin", "admin.lingual-ninja.com"},
-            {"local", "localhost"}
-        };
-
         public SiteMapService()
         {
             // デプロイ直後にサイトマップをキャッシュ
             Task.Run(() =>
             {
-                foreach (var (key, hostName) in hostNames)
+                foreach (var app in Apps.apps)
                 {
-                    GetSiteMapText(hostName);
+                    GetSiteMapText($"{app.Key}.lingual-ninja.com");
                 }
             });
         }
@@ -51,15 +44,15 @@ namespace Z_Apps.Models.SystemBase
             {
                 List<Dictionary<string, string>> lstSitemap;
 
-                if (url == hostNames["dictionary"])
+                if (url == "dictionary.lingual-ninja.com")
                 {
                     lstSitemap = GetJapaneseDictionarySitemap();
                 }
-                else if (url == hostNames["pagesAboutJapan"])
+                else if (url == "pages.lingual-ninja.com")
                 {
                     lstSitemap = GetPagesAboutJapanSitemap();
                 }
-                else if (url == hostNames["local"])
+                else if (url == "localhost")
                 {
                     // ローカルでのデバッグ時
                     lstSitemap = GetLocalhostSitemap();

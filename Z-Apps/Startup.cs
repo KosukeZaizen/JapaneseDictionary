@@ -10,6 +10,7 @@ using System;
 using Z_Apps.Models.SystemBase;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Hosting;
+using Z_Apps.Controllers;
 
 namespace Z_Apps
 {
@@ -38,6 +39,7 @@ namespace Z_Apps
             });
 
             services.AddSingleton(new SiteMapService());
+            services.AddSingleton(new IndexHtml());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,88 +74,18 @@ namespace Z_Apps
                 {
                     context.Response.Headers.Add("Content-Type", "application/xml");
 
-                    var hostName = SiteMapService
-                                    .hostNames
+                    var targetApp = Apps
+                                    .apps
                                     .FirstOrDefault(
                                         h => context
                                             .Request
                                             .Host
                                             .Host
-                                            .Contains(h.Value));
+                                            .Contains($"{h.Key}.lingual-ninja.com"));
 
                     await context.Response.WriteAsync(
-                        siteMapService.GetSiteMapText(hostName.Value)
+                        siteMapService.GetSiteMapText($"{targetApp.Key}.lingual-ninja.com")
                     );
-                }
-                else if (ua.StartsWith("facebookexternalhit") || ua.StartsWith("Twitterbot"))
-                {
-                    var hostName = SiteMapService
-                                    .hostNames
-                                    .FirstOrDefault(
-                                        h => context
-                                            .Request
-                                            .Host
-                                            .Host
-                                            .Contains(h.Value));
-
-                    if (url == null)
-                    {
-                        await next.Invoke();
-                    }
-                    else
-                    {
-                        string resultHTML = "";
-                        if (url == "/")
-                        {
-                            resultHTML = "<!DOCTYPE html><html>" +
-                                "<head>" +
-                                "<meta name='twitter:card' content='summary'>" + Environment.NewLine +
-                                "<meta name='twitter:site' content='@LingualNinja'>" + Environment.NewLine +
-                                "<meta property='og:image' content='https://" + hostName + "/ogp-img.png'>" + Environment.NewLine +
-                                "<meta property='og:url' content='https://" + hostName + "'>" + Environment.NewLine +
-                                "<meta property='og:type' content='website'>" + Environment.NewLine +
-                                "<meta property='og:title' content='Lingual Ninja'>" + Environment.NewLine +
-                                "<meta property='og:image:alt' content='Lingual Ninja'>" + Environment.NewLine +
-                                "<meta property='og:description' content='Free website to learn the meaning of Japanese words! You can learn a lot of Japanese words!'>" + Environment.NewLine +
-                                "<meta property='og:site_name' content='Lingual Ninja'>" + Environment.NewLine +
-                                "<meta property='fb:app_id' content='217853132566874'>" + Environment.NewLine +
-                                "<meta property='fb:page_id' content='491712431290062'>" + Environment.NewLine +
-                                "</head>" + Environment.NewLine +
-                                "<body>Content for SNS bot</body></html>";
-
-                        }
-                        else
-                        {
-                            resultHTML = "<!DOCTYPE html><html>" +
-                                    "<head>" +
-                                    "<meta name='twitter:card' content='summary'>" + Environment.NewLine +
-                                    "<meta name='twitter:site' content='@LingualNinja'>" + Environment.NewLine +
-                                    "<meta property='og:image' content='https://" + hostName + "/ogp-img.png'>" + Environment.NewLine +
-                                    "<meta property='og:url' content='https://" + hostName + url + "'>" + Environment.NewLine +
-                                    "<meta property='og:type' content='article'>" + Environment.NewLine +
-                                    "<meta property='og:title' content='Lingual Ninja'>" + Environment.NewLine +
-                                    "<meta property='og:image:alt' content='Lingual Ninja'>" + Environment.NewLine +
-                                    "<meta property='og:description' content='Free website to learn the meaning of Japanese words! You can learn a lot of Japanese words!'>" + Environment.NewLine +
-                                    "<meta property='og:site_name' content='Lingual Ninja'>" + Environment.NewLine +
-                                    "<meta property='fb:app_id' content='217853132566874'>" + Environment.NewLine +
-                                    "<meta property='fb:page_id' content='491712431290062'>" + Environment.NewLine +
-                                    "</head>" + Environment.NewLine +
-                                    "<body>Content for SNS bot</body></html>";
-                        }
-
-                        var clientLogService = new ClientLogService();
-                        clientLogService.RegisterLog(new ClientOpeLog()
-                        {
-                            url = url,
-                            operationName = "get OGP setting",
-                            userId = "SNS Bot",
-                            parameters = "ua: " + ua
-
-                        });
-
-                        context.Response.Headers.Add("Content-Type", "text/html");
-                        await context.Response.WriteAsync(resultHTML);
-                    }
                 }
                 else
                 {
@@ -164,18 +96,12 @@ namespace Z_Apps
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
-            });
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}"
+                );
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-                spa.Options.DefaultPage = $"/index.html";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
+                endpoints.MapFallbackToController("Index", "Home");
             });
         }
     }

@@ -37,7 +37,7 @@ export default function Top({ location }: Props) {
 
     return (
         <article>
-            <Helmet title={title} desc={desc} isHome />
+            <Helmet title={title} desc={desc} />
 
             <Breadcrumb>
                 <BreadcrumbItem active>Home</BreadcrumbItem>
