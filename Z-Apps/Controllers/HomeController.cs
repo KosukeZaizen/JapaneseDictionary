@@ -2,7 +2,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Z_Apps.Models.SystemBase;
-using Z_Apps.Util;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System;
 
 namespace Z_Apps.Controllers
 {
@@ -16,6 +18,15 @@ namespace Z_Apps.Controllers
 
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(indexHtml.html))
+            {
+                return new ContentResult
+                {
+                    Content = "System is preparing now. Please reload later.",
+                    ContentType = "text/html; charset=utf-8"
+                };
+            }
+
             var request = HttpContext.Request;
             string url = request.Path.Value;
             var app = Apps
@@ -58,8 +69,14 @@ namespace Z_Apps.Controllers
             {
                 while (string.IsNullOrEmpty(html))
                 {
-                    var url = $"https://japan.lingual-ninja.com/index.html";
-                    html = await Fetch.GetAsync(url);
+                    try
+                    {
+                        StreamReader sr = new StreamReader("./ClientApp/build/index.html");
+                        html = sr.ReadToEnd();
+                        sr.Close();
+                    }
+                    catch (Exception ex) { }
+
                     await Task.Delay(5 * 1000);
                 }
             });

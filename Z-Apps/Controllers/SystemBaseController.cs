@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Z_Apps.Models;
 using Z_Apps.Models.SystemBase;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,7 +38,9 @@ namespace Z_Apps.Controllers
         [HttpGet("[action]/{dummyParam?}")]
         public async Task<string> GetVersion()
         {
-            return await versionService.GetVersion();
+            return await versionService.GetVersion(
+                HttpContext.Request.Host.Value
+            );
         }
 
         [HttpGet("[action]")]
