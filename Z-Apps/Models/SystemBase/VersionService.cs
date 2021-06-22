@@ -1,19 +1,15 @@
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Z_Apps.Models.SystemBase
 {
     public class VersionService
     {
-        public async Task<string> GetVersion(string host)
+        public string GetVersion()
         {
-            string resultText = "";
-            using (var client = new HttpClient())
+            using (var sr = new StreamReader("./ClientApp/build/version.txt"))
             {
-                var response = await client.GetAsync("https://" + host + "/version.txt");
-                resultText = await response.Content.ReadAsStringAsync();
+                return sr.ReadToEnd();
             }
-            return resultText;
         }
     }
 }

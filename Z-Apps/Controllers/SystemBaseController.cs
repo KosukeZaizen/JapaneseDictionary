@@ -36,11 +36,9 @@ namespace Z_Apps.Controllers
         }
 
         [HttpGet("[action]/{dummyParam?}")]
-        public async Task<string> GetVersion()
+        public string GetVersion()
         {
-            return await versionService.GetVersion(
-                HttpContext.Request.Host.Value
-            );
+            return versionService.GetVersion();
         }
 
         [HttpGet("[action]")]
