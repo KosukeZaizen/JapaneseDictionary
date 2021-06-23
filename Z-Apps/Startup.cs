@@ -39,7 +39,11 @@ namespace Z_Apps
             });
 
             services.AddSingleton(new SiteMapService());
+
+#if DEBUG
+#else
             services.AddSingleton(new IndexHtml());
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

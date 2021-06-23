@@ -70,10 +70,14 @@ namespace Z_Apps.Controllers
             {
                 while (string.IsNullOrEmpty(html))
                 {
-                    using (var sr = new StreamReader("./ClientApp/build/index.html"))
+                    try
                     {
-                        html = sr.ReadToEnd();
+                        using (var sr = new StreamReader("./ClientApp/build/index.html"))
+                        {
+                            html = sr.ReadToEnd();
+                        }
                     }
+                    catch (Exception ex) { }
 
                     await Task.Delay(5 * 1000);
                 }
