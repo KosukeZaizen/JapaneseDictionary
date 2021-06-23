@@ -64,7 +64,6 @@ namespace Z_Apps
             var options = new RewriteOptions().AddRedirect("(.*)/$", "$1");
             app.UseRewriter(options);
 
-
             app.Use(async (context, next) =>
             {
                 var ua = context.Request.Headers["User-Agent"].ToString();
@@ -94,15 +93,38 @@ namespace Z_Apps
             });
 
             app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}"
-                );
 
-                endpoints.MapFallbackToController("Index", "Home");
-            });
+            if (env.IsDevelopment())
+            {
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller}/{action=Index}/{id?}"
+                    );
+                });
+
+                app.UseSpa(spa =>
+                {
+                    spa.Options.SourcePath = "ClientApp";
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                });
+            }
+            else
+            {
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}"
+                    );
+                });
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapFallbackToController("Index", "Home");
+                });
+            }
         }
     }
 }

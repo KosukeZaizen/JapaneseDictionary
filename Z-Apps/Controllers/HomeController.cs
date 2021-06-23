@@ -5,6 +5,7 @@ using Z_Apps.Models.SystemBase;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Z_Apps.Controllers
 {
@@ -69,13 +70,10 @@ namespace Z_Apps.Controllers
             {
                 while (string.IsNullOrEmpty(html))
                 {
-                    try
+                    using (var sr = new StreamReader("./ClientApp/build/index.html"))
                     {
-                        StreamReader sr = new StreamReader("./ClientApp/build/index.html");
                         html = sr.ReadToEnd();
-                        sr.Close();
                     }
-                    catch (Exception ex) { }
 
                     await Task.Delay(5 * 1000);
                 }
