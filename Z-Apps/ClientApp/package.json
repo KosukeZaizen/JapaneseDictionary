@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@material-ui/core": "^4.9.7",
         "aphrodite": "^2.4.0",
         "bootstrap": "^4.4.1",
         "react": "^17.0.1",

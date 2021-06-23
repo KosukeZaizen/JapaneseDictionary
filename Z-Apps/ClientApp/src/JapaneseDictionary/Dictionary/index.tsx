@@ -1,15 +1,10 @@
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableRow from "@material-ui/core/TableRow";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
 import CardTitle from "reactstrap/lib/CardTitle";
+import Table from "reactstrap/lib/Table";
 import { cFetch } from "../../common/util/cFetch";
 import { SeasonAnimation } from "../../sharedComponents/Animations/SeasonAnimation";
 import ShurikenProgress from "../../sharedComponents/Animations/ShurikenProgress";
@@ -100,9 +95,8 @@ class Dictionary extends React.Component<Props, State> {
                 const res = await cFetch(url);
 
                 const { response, noindex } = await res.json();
-                const { xml, wordId, snippet, translatedWord } = JSON.parse(
-                    response
-                );
+                const { xml, wordId, snippet, translatedWord } =
+                    JSON.parse(response);
 
                 this.setState({
                     wordId,
@@ -126,9 +120,8 @@ class Dictionary extends React.Component<Props, State> {
                                 .call(
                                     word?.getElementsByTagName("Word"),
                                     (w: HTMLElement) => {
-                                        const forType = w?.getElementsByTagName(
-                                            type
-                                        );
+                                        const forType =
+                                            w?.getElementsByTagName(type);
                                         if (forType?.length <= 0) {
                                             return w?.getElementsByTagName(
                                                 "Surface"
@@ -391,54 +384,46 @@ class Dictionary extends React.Component<Props, State> {
                                 <section
                                     style={{
                                         borderBottom: "1px solid gainsboro",
+                                        margin: "20px 0",
                                     }}
                                 >
-                                    <h2 style={styleDiv}>
+                                    <h2
+                                        style={{ ...styleDiv, marginBottom: 6 }}
+                                    >
                                         {"Hiragana and Kanji for " + romaji}
                                     </h2>
-                                    <TableContainer component={Paper}>
-                                        <Table aria-label="simple table">
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell
-                                                        style={
-                                                            tableElementStyle
-                                                        }
-                                                        align="center"
-                                                    >
-                                                        Hiragana
-                                                    </TableCell>
-                                                    <TableCell
-                                                        style={
-                                                            tableElementStyle
-                                                        }
-                                                        align="center"
-                                                    >
-                                                        {furigana}
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell
-                                                        style={
-                                                            tableElementStyle
-                                                        }
-                                                        align="center"
-                                                    >
-                                                        Kanji
-                                                    </TableCell>
-                                                    <TableCell
-                                                        style={
-                                                            tableElementStyle
-                                                        }
-                                                        align="center"
-                                                    >
-                                                        {word}
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                    <br />
+                                    <Table style={{ marginBottom: 0 }}>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    style={tableElementStyle}
+                                                    align="center"
+                                                >
+                                                    Hiragana
+                                                </td>
+                                                <td
+                                                    style={tableElementStyle}
+                                                    align="center"
+                                                >
+                                                    {furigana}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style={tableElementStyle}
+                                                    align="center"
+                                                >
+                                                    Kanji
+                                                </td>
+                                                <td
+                                                    style={tableElementStyle}
+                                                    align="center"
+                                                >
+                                                    {word}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </Table>
                                 </section>
                                 <br />
                                 <section>
