@@ -10,7 +10,12 @@ interface Props {
 }
 export default function ShurikenProgress({ size, style }: Props) {
     return (
-        <div style={style} className="center">
+        <div
+            style={{
+                textAlign: "center",
+                ...style,
+            }}
+        >
             <img
                 src={shuriken}
                 alt="shuriken"

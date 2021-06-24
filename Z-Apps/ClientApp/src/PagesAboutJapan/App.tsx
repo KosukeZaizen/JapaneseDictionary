@@ -2,7 +2,6 @@ import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router";
 import ScrollMemory from "react-router-scroll-memory";
-import { AppToMount } from "..";
 import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { ReturnToLocalMenu } from "../LocalDebug/LocalDebugMenu";
 import FooterAnimation from "../sharedComponents/Animations/FooterAnimation";
@@ -15,13 +14,7 @@ const Top = lazy(() => import("./Top"));
 const Page = lazy(() => import("./Page"));
 const NotFound = lazy(() => import("../sharedComponents/404"));
 
-export const appToMount: AppToMount = {
-    key: "PagesAboutJapan",
-    hostname: "japan.lingual-ninja.com",
-    app: App,
-};
-
-function App() {
+export function App() {
     return (
         <Layout>
             <Suspense fallback={<LoadingAnimation num={1} />}>

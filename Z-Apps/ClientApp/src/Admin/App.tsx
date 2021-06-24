@@ -2,7 +2,6 @@ import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Route, Switch } from "react-router";
 import ScrollMemory from "react-router-scroll-memory";
-import { AppToMount } from "..";
 import { reloadAndRedirect_OneTimeReload } from "../common/functions";
 import { ReturnToLocalMenu } from "../LocalDebug/LocalDebugMenu";
 import ShurikenProgress from "../sharedComponents/Animations/ShurikenProgress";
@@ -16,13 +15,7 @@ const WikiLog = lazy(() => import("./WikiLog"));
 const SitemapCount = lazy(() => import("./SitemapCount"));
 const ApiCache = lazy(() => import("./ApiCache"));
 
-export const appToMount: AppToMount = {
-    key: "Admin",
-    hostname: "admin.lingual-ninja.com",
-    app: App,
-};
-
-function App() {
+export function App() {
     return (
         <div style={{ margin: 30 }}>
             <Helmet noindex />

@@ -5,16 +5,15 @@ import ReactDOM from "react-dom";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "react-router-redux";
-import { appToMount as Admin } from "./Admin/App";
+import { appToMount as Admin } from "./Admin";
 import { startAnimation } from "./common/animation";
 import { azureUrl, siteUrl } from "./common/consts";
 import * as commonFncs from "./common/functions";
 import { checkAppVersion } from "./common/functions";
 import { GOOGLE_ANALYTICS } from "./common/privateConsts";
-import "./css/index.css";
-import { appToMount as JapaneseDictionary } from "./JapaneseDictionary/App";
-import { appToMount as LocalDebugMenu } from "./LocalDebug/LocalDebugMenu";
-import { appToMount as PagesAboutJapan } from "./PagesAboutJapan/App";
+import { appToMount as JapaneseDictionary } from "./JapaneseDictionary";
+import { appToMount as LocalDebugMenu } from "./LocalDebug";
+import { appToMount as PagesAboutJapan } from "./PagesAboutJapan";
 //import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
 import configureStore from "./store/configureStore";
@@ -51,7 +50,7 @@ const rootElement = document.getElementById("root");
 export interface AppToMount {
     key: string;
     hostname: string;
-    app: React.FunctionComponent;
+    getApp: () => Promise<React.FunctionComponent>;
 }
 
 // アプリ追加時は、この配列に追加
@@ -67,21 +66,25 @@ if (appObject?.key === "LocalDebugMenu") {
     const savedAppKey = window.localStorage.getItem("appKeyToMount");
     const savedApp = apps.find(a => a.key === savedAppKey);
     if (savedApp) {
-        appObject.app = savedApp.app;
+        appObject.getApp = savedApp.getApp;
     }
 }
 
 if (!appObject) {
     window.location.href = "https://dictionary.lingual-ninja.com";
 } else {
-    ReactDOM.render(
-        <Provider store={store}>
-            <ConnectedRouter history={history}>
-                <appObject.app />
-            </ConnectedRouter>
-        </Provider>,
-        rootElement
-    );
+    const render = async () => {
+        const App = await appObject.getApp();
+        ReactDOM.render(
+            <Provider store={store}>
+                <ConnectedRouter history={history}>
+                    <App />
+                </ConnectedRouter>
+            </Provider>,
+            rootElement
+        );
+    };
+    render();
 }
 
 //registerServiceWorker();

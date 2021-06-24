@@ -1,13 +1,7 @@
 import React from "react";
-import { apps, AppToMount } from "..";
+import { apps } from "..";
 
-export const appToMount: AppToMount = {
-    key: "LocalDebugMenu",
-    hostname: "localhost",
-    app: LocalDebugMenu,
-};
-
-function LocalDebugMenu() {
+export function LocalDebugMenu() {
     return (
         <div>
             Local Debug Menu
