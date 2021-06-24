@@ -77,7 +77,7 @@ namespace Z_Apps.Controllers
                             html = sr.ReadToEnd();
                         }
                     }
-                    catch (Exception ex) { }
+                    catch (Exception) { }
 
                     await Task.Delay(5 * 1000);
                 }

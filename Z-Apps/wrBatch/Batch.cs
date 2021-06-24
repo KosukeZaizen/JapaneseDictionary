@@ -61,7 +61,7 @@ namespace Z_Apps.wrBatch
                             ErrorLog.InsertErrorLog(ex.Message);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // エラーログ書き込みでエラーが起きた場合は、何もしない
                     }

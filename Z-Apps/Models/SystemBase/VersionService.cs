@@ -18,7 +18,7 @@ namespace Z_Apps.Models.SystemBase
                     return sr.ReadToEnd();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // ローカルデバッグでは「ClientApp/build」未作成の場合があるため
                 using (var client = new HttpClient())
