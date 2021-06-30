@@ -11,7 +11,7 @@ const reducers = {
     base: Base.reducer,
 };
 
-export default function configureStore(history: any, initialState: any) {
+export default function configureStore(history: any, initialState?: any) {
     const middleware = [thunk, routerMiddleware(history)];
 
     // In development, use the browser's Redux dev tools extension if installed

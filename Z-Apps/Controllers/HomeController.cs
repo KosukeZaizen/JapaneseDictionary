@@ -5,7 +5,6 @@ using Z_Apps.Models.SystemBase;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Z_Apps.Controllers
 {
