@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using Z_Apps.Models.SystemBase;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Hosting;
-using Z_Apps.Controllers;
 
 namespace Z_Apps
 {
