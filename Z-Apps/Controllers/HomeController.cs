@@ -59,28 +59,30 @@ namespace Z_Apps.Controllers
             };
         }
     }
+}
 
-    public class IndexHtml
+public class IndexHtml
+{
+    public string html {
+        get; set;
+    }
+    public IndexHtml()
     {
-        public string html { get; set; }
-        public IndexHtml()
+        Task.Run(async () =>
         {
-            Task.Run(async () =>
+            while (string.IsNullOrEmpty(html))
             {
-                while (string.IsNullOrEmpty(html))
+                try
                 {
-                    try
+                    using (var sr = new StreamReader("./ClientApp/build/index.html"))
                     {
-                        using (var sr = new StreamReader("./ClientApp/build/index.html"))
-                        {
-                            html = sr.ReadToEnd();
-                        }
+                        html = sr.ReadToEnd();
                     }
-                    catch (Exception) { }
-
-                    await Task.Delay(5 * 1000);
                 }
-            });
-        }
+                catch (Exception) { }
+
+                await Task.Delay(5 * 1000);
+            }
+        });
     }
 }
