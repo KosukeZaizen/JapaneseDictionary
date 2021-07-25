@@ -7,6 +7,7 @@ import { fallingImage } from "./type";
 
 let count = 0;
 let ls: Leaf[] = [];
+let intervalId = 0;
 
 interface Leaf {
     id: number;
@@ -70,7 +71,11 @@ export const SeasonAnimation = ({
     useEffect(() => {
         setScale((screenWidth + window.innerHeight) / 1000);
 
-        const intervalId = window.setInterval(() => {
+        if (intervalId) {
+            clearInterval(intervalId); // clear old interval
+        }
+
+        intervalId = window.setInterval(() => {
             //各葉っぱは20秒で消える
             const newLeaves = ls
                 .map(l => ({ ...l, ageCount: l.ageCount + 1 }))

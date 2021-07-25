@@ -22,4 +22,4 @@ const replaceVersion = (fileName, newNumber) => {
 const tsFileName = "./src/version.ts";
 const csFileName = "./public/version.txt";
 
-fs.writeFileSync(csFileName, replaceVersion(tsFileName));
+fs.writeFileSync(csFileName, `${replaceVersion(tsFileName)}`);
