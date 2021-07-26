@@ -117,6 +117,8 @@ export const SeasonAnimation = ({
                 alt={`${seasonItem.alt} ${l.id}`}
                 title={`${seasonItem.alt} ${l.id}`}
                 style={{
+                    willChange: "animation",
+                    backfaceVisibility: "hidden",
                     maxWidth: 50 * scale,
                     maxHeight: 50 * scale,
                     position: "fixed",

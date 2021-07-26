@@ -40,17 +40,14 @@ const baseStyle: React.CSSProperties = {
 
 const timeStep = 1000; //ms
 
-const smoothCSSProperty = {
-    transitionDuration: `${timeStep / 1000}s`,
-    transitionTimingFunction: "linear",
-};
-
 export let finishFooterAnimation: () => void;
 export let restartFooterAnimation: () => void;
 
-const smoothPosition = {
-    transitionProperty: "top left",
-    ...smoothCSSProperty,
+const smoothTransform = {
+    willChange: "transform",
+    transitionProperty: "transform",
+    transitionDuration: `${timeStep}ms`,
+    transitionTimingFunction: "linear",
 };
 
 export default function WelcomeAnimation() {
@@ -147,23 +144,20 @@ export default function WelcomeAnimation() {
                 alt="running ninja"
                 style={{
                     ...baseStyle,
-                    left: animationState.ninjaX * U,
-                    bottom: animationState.ninjaY * U,
-                    width: ninjaLength * U,
-                    transform: animationState.turn ? "scale(-1, 1)" : "",
-                    ...smoothPosition,
-                }}
-            />
-            <img
-                src={badNinja}
-                alt="bad ninja"
-                style={{
-                    ...baseStyle,
-                    left: animationState.badNinjaX * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? `scale(-1, 1) ${getTranslate(
+                              -animationState.ninjaX * U,
+                              -animationState.ninjaY * U
+                          )}`
+                        : getTranslate(
+                              animationState.ninjaX * U,
+                              -animationState.ninjaY * U
+                          ),
+                    ...smoothTransform,
                 }}
             />
             <img
@@ -171,11 +165,17 @@ export default function WelcomeAnimation() {
                 alt="bad ninja"
                 style={{
                     ...baseStyle,
-                    left: animationState.badNinjaX * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? getTranslate(animationState.badNinjaX * U, 0)
+                        : `scale(-1, 1) ${getTranslate(
+                              -animationState.badNinjaX * U,
+                              0
+                          )}`,
+                    ...smoothTransform,
                 }}
             />
             <img
@@ -183,11 +183,17 @@ export default function WelcomeAnimation() {
                 alt="bad ninja"
                 style={{
                     ...baseStyle,
-                    left: (animationState.badNinjaX - 100) * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U * 1.1,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? getTranslate((animationState.badNinjaX - 100) * U, 0)
+                        : `scale(-1, 1) ${getTranslate(
+                              -(animationState.badNinjaX - 100) * U,
+                              0
+                          )}`,
+                    ...smoothTransform,
                 }}
             />
             <img
@@ -195,11 +201,17 @@ export default function WelcomeAnimation() {
                 alt="bad ninja"
                 style={{
                     ...baseStyle,
-                    left: (animationState.badNinjaX - 200) * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? getTranslate((animationState.badNinjaX - 200) * U, 0)
+                        : `scale(-1, 1) ${getTranslate(
+                              -(animationState.badNinjaX - 200) * U,
+                              0
+                          )}`,
+                    ...smoothTransform,
                 }}
             />
             <img
@@ -207,11 +219,17 @@ export default function WelcomeAnimation() {
                 alt="bad ninja"
                 style={{
                     ...baseStyle,
-                    left: (animationState.badNinjaX - 300) * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U * 1.1,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? getTranslate((animationState.badNinjaX - 300) * U, 0)
+                        : `scale(-1, 1) ${getTranslate(
+                              -(animationState.badNinjaX - 300) * U,
+                              0
+                          )}`,
+                    ...smoothTransform,
                 }}
             />
             <img
@@ -219,11 +237,17 @@ export default function WelcomeAnimation() {
                 alt="bad ninja"
                 style={{
                     ...baseStyle,
-                    left: (animationState.badNinjaX - 400) * U,
+                    backfaceVisibility: "hidden",
+                    left: 0,
                     bottom: 0,
                     width: ninjaLength * U * 1.1,
-                    transform: animationState.turn ? "" : "scale(-1, 1)",
-                    ...smoothPosition,
+                    transform: animationState.turn
+                        ? getTranslate((animationState.badNinjaX - 400) * U, 0)
+                        : `scale(-1, 1) ${getTranslate(
+                              -(animationState.badNinjaX - 400) * U,
+                              0
+                          )}`,
+                    ...smoothTransform,
                 }}
             />
             {animationState.time > 10000 / timeStep && (
@@ -233,11 +257,16 @@ export default function WelcomeAnimation() {
                         alt="rock"
                         style={{
                             ...baseStyle,
-                            left: (animationState.ninjaX - 5) * U,
+                            backfaceVisibility: "hidden",
+                            left: 0,
                             bottom: 0,
                             width: ninjaLength * U * 1.3,
                             zIndex: 1000000001,
-                            ...smoothPosition,
+                            transform: getTranslate(
+                                (animationState.ninjaX - 5) * U,
+                                0
+                            ),
+                            ...smoothTransform,
                         }}
                     />
                     <img
@@ -245,10 +274,15 @@ export default function WelcomeAnimation() {
                         alt="fire"
                         style={{
                             ...baseStyle,
-                            left: (animationState.ninjaX - ninjaLength) * U,
+                            backfaceVisibility: "hidden",
+                            left: 0,
                             bottom: 0,
                             width: ninjaLength * U * 1.3,
-                            ...smoothPosition,
+                            transform: getTranslate(
+                                (animationState.ninjaX - ninjaLength) * U,
+                                0
+                            ),
+                            ...smoothTransform,
                         }}
                     />
                 </>
@@ -259,14 +293,23 @@ export default function WelcomeAnimation() {
                     alt="flying ninja"
                     style={{
                         ...baseStyle,
-                        left: animationState.flyingNinjaPos[0] * U,
-                        bottom: animationState.flyingNinjaPos[1] * U,
+                        backfaceVisibility: "hidden",
+                        left: 0,
+                        bottom: 0,
                         width: ninjaLength * U * 1.5,
                         display: animationState.flyingNinjaDisplay,
-                        ...smoothPosition,
+                        transform: getTranslate(
+                            animationState.flyingNinjaPos[0] * U,
+                            -animationState.flyingNinjaPos[1] * U
+                        ),
+                        ...smoothTransform,
                     }}
                 />
             )}
         </>
     );
+}
+
+function getTranslate(x: number, y: number) {
+    return `translate3d(${Math.floor(x)}px,${Math.floor(y)}px,0px)`;
 }
