@@ -1,15 +1,24 @@
-@keyframes fall {
+@keyframes fallSmall {
     0% {
-        transform: translate3d(0px, 0px, 0px) rotate(0deg);
+        transform: translate(0px, 0px) rotate(0deg);
     }
     100% {
-        transform: translate3d(-1000px, 2000px, 0px) rotate(1000deg);
+        transform: translate(-1000px, 2000px) rotate(2000deg);
+    }
+}
+
+@keyframes fall {
+    0% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+    100% {
+        transform: translate(-1000px, 2000px) rotate(1000deg);
     }
 }
 
 @media only screen and (max-width: 600px) {
     .falling {
-        animation: fall 40s 1s ease-out;
+        animation: fallSmall 40s 1s ease-out;
     }
 }
 
