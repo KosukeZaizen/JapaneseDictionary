@@ -160,8 +160,10 @@ public class WikiService
                             .Replace("&", ""))
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorLog.InsertErrorLog(ex.Message);
+
                 var json = "removed";
                 con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
                     new Dictionary<string, object[]> {
