@@ -47,7 +47,7 @@ namespace Z_Apps.Models.SystemBase
                 {
                     lstSitemap = GetJapaneseDictionarySitemap();
                 }
-                else if (url == "pages.lingual-ninja.com")
+                else if (url == "japan.lingual-ninja.com")
                 {
                     lstSitemap = GetPagesAboutJapanSitemap();
                 }
@@ -83,7 +83,7 @@ namespace Z_Apps.Models.SystemBase
         {
             var lstSitemap = new List<Dictionary<string, string>>();
 
-            //top page (noindexのためコメントアウト)
+            //top page
             var dic1 = new Dictionary<string, string>();
             dic1["loc"] = "https://dictionary.lingual-ninja.com";
             lstSitemap.Add(dic1);
@@ -110,7 +110,7 @@ namespace Z_Apps.Models.SystemBase
         {
             var lstSitemap = new List<Dictionary<string, string>>();
 
-            //top page (noindexのためコメントアウト)
+            //top page
             var dic1 = new Dictionary<string, string>();
             dic1["loc"] = "https://japan.lingual-ninja.com";
             lstSitemap.Add(dic1);
