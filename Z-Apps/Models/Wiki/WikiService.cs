@@ -48,7 +48,8 @@ public class WikiService
 
         var result = con.ExecuteSelect(
                 sql,
-                new Dictionary<string, object[]> { { "@num", new object[2] { SqlDbType.Int, num } } }
+                new Dictionary<string, object[]> { { "@num", new object[2] { SqlDbType.Int, num } } },
+                60 * 60 * 2 // 2 hours
             );
 
         return result.Select(r => (string)r["word"]);

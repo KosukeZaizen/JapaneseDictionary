@@ -79,7 +79,7 @@ namespace Z_Apps.Models
                 }
                 catch (Exception exception)
                 {
-                    ErrorLog.InsertErrorLog(exception.Message);
+                    ErrorLog.InsertErrorLog("SQL: " + sql + "  Exception.Message: " + exception.Message);
                     throw;
                 }
                 finally
@@ -131,7 +131,7 @@ namespace Z_Apps.Models
                 }
                 catch (Exception exception)
                 {
-                    ErrorLog.InsertErrorLog(exception.Message);
+                    ErrorLog.InsertErrorLog("SQL: " + sql + "  Exception.Message: " + exception.Message);
                     throw;
                 }
                 finally

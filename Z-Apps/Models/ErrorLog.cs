@@ -24,7 +24,7 @@ values (DATEADD(HOUR, 9, GETDATE()), @error);
 ;",
                 new Dictionary<string, object[]> {
                             { "@error", new object[2] { SqlDbType.NVarChar,
-                                $"{strClassName}.{strMethodName}(): {error}"
+                                $"JapaneseDictionary {strClassName}.{strMethodName}(): {error}"
                             } }
                 });
         }

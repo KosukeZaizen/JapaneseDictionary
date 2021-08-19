@@ -118,7 +118,11 @@ namespace Z_Apps.Models.SystemBase
             //各ページ
             IEnumerable<string> allWords =
                         new DBCon(DBCon.DBType.wiki_db)
-                            .ExecuteSelect("select word from pajWords;")
+                            .ExecuteSelect(
+                                "select word from pajWords;",
+                                null,
+                                60 * 60 * 2 // 2 hours
+                            )
                             .Select(r => (string)r["word"]);
 
             foreach (string word in allWords)
