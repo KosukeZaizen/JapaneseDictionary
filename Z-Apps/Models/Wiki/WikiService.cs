@@ -14,7 +14,7 @@ using Z_Apps.Util;
 
 public class WikiService
 {
-    private readonly List<string> ExcludedWords = new List<string>
+    private readonly List<string> WordsToExclude = new List<string>
         {
             "一覧",
             "曖昧さ",
@@ -24,17 +24,8 @@ public class WikiService
             "邾",
             "(",
             "（",
+            ".",
         };
-
-    public IEnumerable<string> Exclude(IEnumerable<string> words)
-    {
-        return (words)
-            .Where(
-                word => !ExcludedWords.Any(
-                    excludedWord => word.Contains(excludedWord)
-                ));
-    }
-
 
     public IEnumerable<string> GetAllWordsFromDB(int num)
     {
@@ -198,7 +189,7 @@ public class WikiService
             //キャッシュデータなし
             DictionaryResult obj;
             string json;
-            if (ExcludedWords.Any(ew => word.Contains(ew)))
+            if (WordsToExclude.Any(ew => word.Contains(ew)))
             {
                 //除外対象文字列を含む場合
                 obj = new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
