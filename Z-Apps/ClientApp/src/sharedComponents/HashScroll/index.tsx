@@ -1,3 +1,4 @@
+import { Location } from "history";
 import React, { ReactNode, useEffect } from "react";
 
 /**

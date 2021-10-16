@@ -45,6 +45,7 @@ function NotFoundRedirect() {
         const v = await res.text();
 
         if (Number(v) !== APP_VERSION) {
+            // @ts-ignore
             window.location.reload(true);
         } else {
             reloadAndRedirect_OneTimeReload("pageNotFoundRedirect");

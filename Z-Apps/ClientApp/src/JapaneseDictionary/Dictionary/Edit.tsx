@@ -1,12 +1,10 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 import { cFetch } from "../../common/util/cFetch";
 import Head from "../../sharedComponents/Helmet";
 import { InputRegisterToken } from "../../sharedComponents/InputRegisterToken";
-type Props = {
-    location: { pathname: string };
-    match: { params: { word: string } };
-};
+type Props = RouteComponentProps<{ word: string }>;
 type State = {
     word: string;
     xml: string;

@@ -1,11 +1,9 @@
 import * as React from "react";
 import { useEffect } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import Head from "../../sharedComponents/Helmet";
 
-type Props = {
-    location: { pathname: string };
-    match: { params: { word: string } };
-};
+type Props = RouteComponentProps<{ word: string }>;
 export default function Exclude(props: Props) {
     useEffect(() => {
         const {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import Breadcrumb from "reactstrap/lib/Breadcrumb";
 import BreadcrumbItem from "reactstrap/lib/BreadcrumbItem";
 import Card from "reactstrap/lib/Card";
@@ -17,9 +17,7 @@ interface Category {
     words: string[];
 }
 
-interface Props {
-    location: Location;
-}
+type Props = RouteComponentProps;
 
 const title = "Pages about Japan";
 const desc = `Website to introduce articles about Japan.

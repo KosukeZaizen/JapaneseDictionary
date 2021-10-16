@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import Button from "reactstrap/lib/Button";
 import Card from "reactstrap/lib/Card";
 import CardText from "reactstrap/lib/CardText";
@@ -15,10 +15,7 @@ import { StoriesList } from "../Stories/StoriesTop/StoriesList";
 import { storyDesc } from "../Stories/types/stories";
 import { getRomaji } from "./romajiConvert";
 
-type Props = {
-    location: { pathname: string };
-    match: { params: { word: string } };
-};
+type Props = RouteComponentProps<{ word: string }>;
 type State = {
     word: string;
     translatedWord: string;

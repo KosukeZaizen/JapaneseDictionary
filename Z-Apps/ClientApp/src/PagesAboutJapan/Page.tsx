@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import Breadcrumb from "reactstrap/lib/Breadcrumb";
 import BreadcrumbItem from "reactstrap/lib/BreadcrumbItem";
 import Card from "reactstrap/lib/Card";
@@ -27,10 +27,7 @@ interface Category {
 
 const initialCategory: Category = { category: "", words: [] };
 
-interface Props {
-    location: Location;
-    match: { params: { word: string } };
-}
+type Props = RouteComponentProps<{ word: string }>;
 
 export default function Page({
     location,
