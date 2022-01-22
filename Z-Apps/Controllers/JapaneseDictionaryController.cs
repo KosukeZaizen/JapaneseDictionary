@@ -35,8 +35,9 @@ namespace Z_Apps.Controllers
             var con = new DBCon(DBCon.DBType.wiki_db);
             var sql = @"
 UPDATE ZAppsDictionaryCache SET
- response = N'removed'
- where word = @word
+response = N'removed',
+noindex = 1
+where word = @word
 ;";
 
             var result = con.ExecuteSelect(
@@ -58,8 +59,8 @@ UPDATE ZAppsDictionaryCache SET
             var con = new DBCon(DBCon.DBType.wiki_db);
             var sql = @"
 UPDATE ZAppsDictionaryCache SET
- response = @jsonText
- where word = @word
+response = @jsonText
+where word = @word
 ;";
 
             var result = con.ExecuteSelect(

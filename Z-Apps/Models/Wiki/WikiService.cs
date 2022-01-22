@@ -30,12 +30,13 @@ public class WikiService
     public IEnumerable<string> GetAllWordsFromDB(int num)
     {
         var con = new DBCon(DBCon.DBType.wiki_db);
-        var sql =
-                num == 0
-                    ? "select word from ZAppsDictionaryCache"
-                    : "select top(@num) word from ZAppsDictionaryCache";
-        sql += " where response != N'removed' and noindex = 0";
-        sql += " order by word desc;";
+
+        var top = num == 0 ? "" : "top(@num)";
+        var sql = @$"
+            select {top} word from ZAppsDictionaryCache
+            with(index(IX_ZAppsDictionaryCache_noindex))
+            where noindex = 0
+            order by word desc;";
 
         var result = con.ExecuteSelect(
                 sql,
@@ -215,7 +216,9 @@ public class WikiService
                     )
                     || json == "removed")
                 {
-                    con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 0);",
+                    var noindex = json == "removed" ? 1 : 0;
+
+                    con.ExecuteUpdate($"insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), {noindex});",
                         new Dictionary<string, object[]> {
                             { "@json", new object[2] { SqlDbType.NVarChar, json } },
                             { "@word", new object[2] { SqlDbType.NVarChar, word } }
