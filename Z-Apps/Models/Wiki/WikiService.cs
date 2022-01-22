@@ -34,7 +34,7 @@ public class WikiService
         var top = num == 0 ? "" : "top(@num)";
         var sql = @$"
             select {top} word from ZAppsDictionaryCache
-            with(index(IX_ZAppsDictionaryCache_noindex))
+            with(index(noindex))
             where noindex = 0
             order by word desc;";
 
