@@ -37,10 +37,12 @@ export default function Page({
 }: Props) {
     const [pages, setPages] = useState<RelatedPage[]>([]);
     const [category, setCategory] = useState(initialCategory);
+    const [noindex, setNoindex] = useState(false);
 
     useEffect(() => {
         setPages([]);
         setCategory(initialCategory);
+        setNoindex(originalWord.includes(".") || originalWord.includes("/"));
 
         const load = async () => {
             setPages(await fetchRelatedPages(originalWord));
@@ -56,7 +58,7 @@ Visit the pages below to learn about ${word}.`;
 
     return (
         <>
-            <Helmet title={word} desc={desc} />
+            <Helmet title={word} desc={desc} noindex={noindex} />
 
             <Breadcrumb>
                 <BreadcrumbItem>

@@ -123,18 +123,18 @@ namespace Z_Apps.Models.SystemBase
                                 null,
                                 60 * 60 * 2 // 2 hours
                             )
-                            .Select(r => (string)r["word"]);
+                            .Select(r => (string)r["word"])
+                            .Select(word => HttpUtility
+                                    .UrlEncode(word, Encoding.UTF8)
+                                    .Replace("+", "%20"))
+                            .Where(word => !word.Contains(".") && !word.Contains("/"));
 
             foreach (string word in allWords)
             {
-                var encodedWord = HttpUtility
-                                    .UrlEncode(word, Encoding.UTF8)
-                                    .Replace("+", "%20");
-
                 lstSitemap.Add(new Dictionary<string, string>(){
                     {
                         "loc",
-                        $"https://japan.lingual-ninja.com/p/{encodedWord}"
+                        $"https://japan.lingual-ninja.com/p/{word}"
                     }
                 });
             }
