@@ -155,7 +155,7 @@ public class WikiService
             }
             catch (Exception ex)
             {
-                ErrorLog.InsertErrorLog(ex.Message);
+                ErrorLog.InsertErrorLog($"Exception occurred in getDictionaryDataWithoutCache. Target word:{word}, ErrorMessage:{ex.Message}");
 
                 var json = "removed";
                 con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
