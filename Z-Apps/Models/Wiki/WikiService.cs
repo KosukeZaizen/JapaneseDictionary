@@ -103,31 +103,39 @@ public class WikiService
                             return new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
                         }
 
-                        //英語に翻訳
-                        w.snippet = (
-                            await MakeEnglish(
-                                w.snippet
-                                    .Replace("<bold>", "")
-                                    .Replace("<bold", "")
-                                    .Replace("<bol", "")
-                                    .Replace("<bo", "")
-                                    .Replace("<b", "")
-                                    .Replace("</bold>", "")
-                                    .Replace("</bold", "")
-                                    .Replace("</bol", "")
-                                    .Replace("</bo", "")
-                                    .Replace("</b", "")
-                                    .Replace("</", "")
-                                    .Replace("/bold>", "")
-                                    .Replace("bold>", "")
-                                    .Replace("old>", "")
-                                    .Replace("ld>", "")
-                                    .Replace("d>", "")
-                                    .Replace("#", "")
-                                    .Replace("?", "")
-                                    .Replace("&", "")
-                            )
-                        );
+                        try
+                        {
+                            //英語に翻訳
+                            w.snippet = (
+                                await MakeEnglish(
+                                    w.snippet
+                                        .Replace("<bold>", "")
+                                        .Replace("<bold", "")
+                                        .Replace("<bol", "")
+                                        .Replace("<bo", "")
+                                        .Replace("<b", "")
+                                        .Replace("</bold>", "")
+                                        .Replace("</bold", "")
+                                        .Replace("</bol", "")
+                                        .Replace("</bo", "")
+                                        .Replace("</b", "")
+                                        .Replace("</", "")
+                                        .Replace("/bold>", "")
+                                        .Replace("bold>", "")
+                                        .Replace("old>", "")
+                                        .Replace("ld>", "")
+                                        .Replace("d>", "")
+                                        .Replace("#", "")
+                                        .Replace("?", "")
+                                        .Replace("&", "")
+                                )
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLog.InsertErrorLog($"Exception occurred when fetching google translation app. Word:{word}, ErrorMessage:{ex.Message}");
+                            return null;
+                        }
                     }
                 }
 
@@ -248,13 +256,31 @@ public class WikiService
 
     public async Task<string> MakeEnglish(string kanji)
     {
-        string url = @"https://script.google.com/macros/s/AKfycbzIEz24LNM-m92y6elzl8DCoG-uZi-HhDZ5ARQKPtMyll9w6V4/exec?text="
+        // Explanation:
+        // https://qiita.com/satto_sann/items/be4177360a0bc3691fdf
+
+        // Apps Script:
+        // https://script.google.com/home/projects/1ibWrQwdxAHyvEtKbxvuU8OztGlGCumDb6VmEc59nkJ_prajItLPayLxx/edit
+
+        string url = @"https://script.google.com/macros/s/AKfycbzybNyMvQkLkgzgtxOE-8Js7dTBnECkj4uN7Q2vDMMPbXMkEoCd5grxM9RTiPstgttMIw/exec?text="
             + kanji + @"&source=ja&target=en";
 
         using (var client = new HttpClient())
         {
-            var result = await client.GetStringAsync(url);
-            return result;
+            var jsonString = await client.GetStringAsync(url);
+            GoogleResult googleResult =
+                JsonSerializer.Deserialize<GoogleResult>(jsonString);
+            if (googleResult.code == 200)
+            {
+                return googleResult.text;
+            }
+            throw new Exception("Result code from Google Translate App is not 200");
         }
     }
+    private class GoogleResult
+    {
+        public int code { get; set; }
+        public string text { get; set; }
+    }
 }
+
