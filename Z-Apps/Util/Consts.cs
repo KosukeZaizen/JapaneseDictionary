@@ -10,5 +10,8 @@ namespace Z_Apps.Util
 
         //sitemap.xml path
         public static string SITEMAP_PATH = "/lingual-storage/appsPublic/sitemap.xml";
+
+        //articles url
+        public static string ARTICLES_URL = "https://articles.lingual-ninja.com";
     }
 }

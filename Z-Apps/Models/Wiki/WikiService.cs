@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -139,31 +141,28 @@ public class WikiService
                     }
                 }
 
-                string url = "http://jlp.yahooapis.jp/FuriganaService/V1/furigana";
+                var xml = "";
+                try
+                {
+                    xml = await GetFurigana(word);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLog.InsertErrorLog(ex.Message);
+                    return null;
+                }
 
-                //文字コードを指定する
-                Encoding enc =
-                    Encoding.GetEncoding("UTF-8");
+                if (xml == "")
+                {
+                    ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string.");
+                    return null;
+                }
 
-                //POST送信する文字列を作成
-                string postData =
-                    "sentence=" +
-                    System.Web.HttpUtility.UrlEncode(word, enc);
-                //バイト型配列に変換
-                byte[] postDataBytes = enc.GetBytes(postData);
-
-                System.Net.WebClient wc = new System.Net.WebClient();
-                //ヘッダにContent-Typeを加える
-                wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-                wc.Headers.Add("User-Agent", PrivateConsts.YAHOO_API_ID);
-                //データを送信し、また受信する
-                byte[] resData = wc.UploadData(url, postDataBytes);
-                wc.Dispose();
 
                 //受信したデータを表示する
                 return new DictionaryResult()
                 {
-                    xml = enc.GetString(resData),
+                    xml = xml,
                     wordId = w.wordId,
                     snippet = w.snippet,
                     translatedWord = await MakeEnglish(word
@@ -175,13 +174,6 @@ public class WikiService
             catch (Exception ex)
             {
                 ErrorLog.InsertErrorLog($"Exception occurred in getDictionaryDataWithoutCache. Target word:{word}, ErrorMessage:{ex.Message}");
-
-                // var json = "removed";
-                // con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
-                //     new Dictionary<string, object[]> {
-                //             { "@json", new object[2] { SqlDbType.NVarChar, json } },
-                //             { "@word", new object[2] { SqlDbType.NVarChar, word } }
-                //         });
             }
             return null;
         };
@@ -252,6 +244,24 @@ public class WikiService
                 Noindex = false
             };
         }
+    }
+
+    public async Task<string> GetFurigana(string encodedWord)
+    {
+        var jsonString = await Fetch.GetAsync($"{Consts.ARTICLES_URL}/api/japaneseDictionary/yahooFuriganaV1?word={encodedWord}");
+        var nextResult = JsonSerializer.Deserialize<NextResult>(jsonString);
+
+        if (nextResult.responseType == "success")
+        {
+            return nextResult.xml;
+        }
+        throw new Exception($"Error from next.js furigana api. ResponseType: {nextResult.responseType}");
+    }
+
+    private class NextResult
+    {
+        public string responseType { get; set; }
+        public string xml { get; set; }
     }
 
     public async Task<string> MakeEnglish(string kanji)
