@@ -80,8 +80,19 @@ public class WikiService
                 Data w = null;
                 using (var client = new HttpClient())
                 {
-                    HttpResponseMessage response = await client.GetAsync("https://wiki-jp.lingual-ninja.com/api/WikiWalks/GetWordIdAndSnippet?word=" + word);
-                    string json = await response.Content.ReadAsStringAsync();
+                    string json = "";
+                    var targetUrl = "https://wiki-jp.lingual-ninja.com/api/WikiWalks/GetWordIdAndSnippet?word=" + word;
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(targetUrl);
+                        json = await response.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLog.InsertErrorLog($"Exception occurred when fetching. URL:{targetUrl}, ErrorMessage:{ex.Message}");
+                        return null;
+                    }
+
                     var serializer = new DataContractJsonSerializer(typeof(Data));
                     using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
                     {
@@ -157,12 +168,12 @@ public class WikiService
             {
                 ErrorLog.InsertErrorLog($"Exception occurred in getDictionaryDataWithoutCache. Target word:{word}, ErrorMessage:{ex.Message}");
 
-                var json = "removed";
-                con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
-                    new Dictionary<string, object[]> {
-                            { "@json", new object[2] { SqlDbType.NVarChar, json } },
-                            { "@word", new object[2] { SqlDbType.NVarChar, word } }
-                        });
+                // var json = "removed";
+                // con.ExecuteUpdate("insert into ZAppsDictionaryCache values(@word, @json, GETDATE(), 1);",
+                //     new Dictionary<string, object[]> {
+                //             { "@json", new object[2] { SqlDbType.NVarChar, json } },
+                //             { "@word", new object[2] { SqlDbType.NVarChar, word } }
+                //         });
             }
             return null;
         };
