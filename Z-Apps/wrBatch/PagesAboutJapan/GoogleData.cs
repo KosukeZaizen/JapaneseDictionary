@@ -21,7 +21,15 @@ namespace Z_Apps.wrBatch
             {
                 try
                 {
-                    var wordsToRegister = GetWordsToRegister();
+                    IEnumerable<string> wordsToRegister;
+                    try
+                    {
+                        wordsToRegister = GetWordsToRegister();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Error occurred in GetWordsToRegister method: " + ex.Message);
+                    }
 
                     foreach (var word in wordsToRegister)
                     {
@@ -31,7 +39,7 @@ namespace Z_Apps.wrBatch
                         }
                         catch (Exception ex)
                         {
-                            ErrorLog.InsertErrorLog(ex.Message);
+                            ErrorLog.InsertErrorLog("Error occurred in RegisterRelatedPages method: " + ex.Message);
                             await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
                         await Task.Delay(1000 * 60);
@@ -39,7 +47,9 @@ namespace Z_Apps.wrBatch
                 }
                 catch (Exception ex)
                 {
-                    ErrorLog.InsertErrorLog(ex.Message);
+                    ErrorLog.InsertErrorLog(
+                        "Exception occurred in setPagesData method: " + ex.Message
+                    );
                 }
                 await Task.Delay(1000 * 60 * 60 * 24); // １日待機（wordsToRegisterの状況が変わるまで時間がかかるため）
             }
@@ -47,174 +57,212 @@ namespace Z_Apps.wrBatch
 
         private static async Task RegisterRelatedPages(string word)
         {
-            // Wikipedia APIからカテゴリの取得
-            var category = await GetCategory(word);
-            if (string.IsNullOrEmpty(category))
+            try
             {
-                return;
-            }
-
-            // Google APIから関連サイトの取得
-            var googleResultItems = (await GetGoogleResult(word)).items;
-            if (googleResultItems == null || googleResultItems.Count() <= 5)
-            {
-                return;
-            }
-
-            // トランザクションを張り、データの登録
-            new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
+                // Wikipedia APIからカテゴリの取得
+                var category = await GetCategory(word);
+                if (string.IsNullOrEmpty(category))
                 {
-                    try
+                    return;
+                }
+
+                // Google APIから関連サイトの取得
+                var googleResultItems = (await GetGoogleResult(word)).items;
+                if (googleResultItems == null || googleResultItems.Count() <= 5)
+                {
+                    return;
+                }
+
+                // トランザクションを張り、データの登録
+                new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
                     {
-                        // 単語の削除・登録
-                        execUpdate(
-                            "delete from pajWords where word = @word;",
-                            new Dictionary<string, object[]> {
+                        try
+                        {
+                            // 単語の削除・登録
+                            execUpdate(
+                                    "delete from pajWords where word = @word;",
+                                    new Dictionary<string, object[]> {
                                 { "@word", new object[2] { SqlDbType.NVarChar, word } },
-                            }
-                        );
-                        var wordResultCount = execUpdate(
-                            @"insert into pajWords(word,category)
+                                    }
+                                );
+                            var wordResultCount = execUpdate(
+                                @"insert into pajWords(word,category)
                             values (@word,@category);",
-                            new Dictionary<string, object[]> {
+                                new Dictionary<string, object[]> {
                                 { "@word", new object[2] { SqlDbType.NVarChar, word } },
                                 { "@category", new object[2] { SqlDbType.NVarChar, category } },
+                                }
+                            );
+                            if (wordResultCount != 1)
+                            {
+                                return false;
                             }
-                        );
-                        if (wordResultCount != 1)
-                        {
-                            return false;
-                        }
 
-                        // 単語に対するGoogle検索結果の削除・登録
-                        execUpdate(
-                            "delete from pajRelatedPages where relatedWord = @relatedWord;",
-                            new Dictionary<string, object[]> {
+                            // 単語に対するGoogle検索結果の削除・登録
+                            execUpdate(
+                                    "delete from pajRelatedPages where relatedWord = @relatedWord;",
+                                    new Dictionary<string, object[]> {
                                 { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } },
-                            }
-                        );
-                        foreach (var article in googleResultItems)
-                        {
-                            var pageResultCount = execUpdate(
-                                @"insert into pajRelatedPages(pageName,relatedWord,link,explanation)
+                                    }
+                                );
+                            foreach (var article in googleResultItems)
+                            {
+                                var pageResultCount = execUpdate(
+                                    @"insert into pajRelatedPages(pageName,relatedWord,link,explanation)
                                 values (@pageName,@relatedWord,@link,@explanation);",
-                                new Dictionary<string, object[]> {
+                                    new Dictionary<string, object[]> {
                                     { "@pageName", new object[2] { SqlDbType.NVarChar, article.title } },
                                     { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } },
                                     { "@link", new object[2] { SqlDbType.NVarChar, article.link } },
                                     { "@explanation", new object[2] { SqlDbType.NVarChar, article.snippet } },
+                                    }
+                                );
+                                if (pageResultCount != 1)
+                                {
+                                    return false;
                                 }
-                            );
-                            if (pageResultCount != 1)
-                            {
-                                return false;
                             }
-                        }
 
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLog.InsertErrorLog(ex.Message);
-                        return false;
-                    }
-                },
-                60 * 60 // トランザクションのタイムアウト１時間
-            );
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLog.InsertErrorLog(
+                                "Error occurred in the DB transation: " + ex.Message
+                            );
+                            return false;
+                        }
+                    },
+                    60 * 60 // トランザクションのタイムアウト１時間
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Exception occurred in RegisterRelatedPages method: " + ex.Message
+                );
+            }
         }
 
         private static async Task<GoogleResult> GetGoogleResult(string word)
         {
-            var url = GetGoogleUrlWithParam(word);
+            try
+            {
+                var url = GetGoogleUrlWithParam(word);
 
-            //15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
-            await Task.Delay(1000 * 60 * 15);
-            var json = await Fetch.GetAsync(url);
+                //15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
+                await Task.Delay(1000 * 60 * 15);
+                var json = await Fetch.GetAsync(url);
 
-            return JsonConvert.DeserializeObject<GoogleResult>(json);
+                return JsonConvert.DeserializeObject<GoogleResult>(json);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Error occurred in GetGoogleResult method:" + ex.Message
+                );
+            }
         }
 
         private static string GetGoogleUrlWithParam(string word)
         {
-            string url = "https://www.googleapis.com/customsearch/v1";
+            try
+            {
+                string url = "https://www.googleapis.com/customsearch/v1";
 
-            //POST送信する文字列を作成
-            string encodedWord =
-                        HttpUtility
-                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
+                //POST送信する文字列を作成
+                string encodedWord =
+                            HttpUtility
+                            .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
 
-            return url +
-                        "?key=" +
-                        PrivateConsts.GOOGLE_SEARCH_API_KEY +
-                        "&cx=" +
-                        PrivateConsts.GOOGLE_SEARCH_ENGINE_ID +
-                        "&q=" +
-                        encodedWord;
+                return url +
+                            "?key=" +
+                            PrivateConsts.GOOGLE_SEARCH_API_KEY +
+                            "&cx=" +
+                            PrivateConsts.GOOGLE_SEARCH_ENGINE_ID +
+                            "&q=" +
+                            encodedWord;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Exception occurred in GetGoogleUrlWithParam method: " + ex.Message
+                );
+            }
         }
 
         private static async Task<string> GetCategory(string word)
         {
-            var categoriesCount = GetCategoriesCount();
-
-            var encodedWord = HttpUtility
-                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
-
-            var xml = await Fetch.GetAsync(
-                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
-            );
-
-            XElement xmlTree = XElement.Parse(xml);
-            var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
-            var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
-            var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
-            var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
-
-            var cats = categories
-                .Elements()
-                .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
-
-            var filteredCategories = cats
-                .Where(c =>
-                    {
-                        string lower = c.ToLower();
-                        return lower.Contains("japan") &&
-                                !lower.Contains("articles") &&
-                                !lower.Contains("cs1") &&
-                                !lower.Contains("use") &&
-                                !lower.Contains("using") &&
-                                !lower.Contains("ambiguation") &&
-                                !lower.Contains("wikidata");
-                    }
-                )
-                .OrderByDescending(c =>
-                {
-                    var categoryCount = categoriesCount
-                                            .FirstOrDefault(cc => cc.category == c);
-                    if (categoryCount == null)
-                    {
-                        return 0;
-                    }
-                    return categoryCount.count;
-                });
-
-            var categoryWithoutNumber = filteredCategories
-                                        .FirstOrDefault(c => !c.Contains("0") &&
-                                                            !c.Contains("1") &&
-                                                            !c.Contains("2") &&
-                                                            !c.Contains("3") &&
-                                                            !c.Contains("4") &&
-                                                            !c.Contains("5") &&
-                                                            !c.Contains("6") &&
-                                                            !c.Contains("7") &&
-                                                            !c.Contains("8") &&
-                                                            !c.Contains("9"));
-
-            if (categoryWithoutNumber != null)
+            try
             {
-                // 数値を含まないものがあれば、そちらを優先
-                return categoryWithoutNumber;
+                var categoriesCount = GetCategoriesCount();
+
+                var encodedWord = HttpUtility
+                            .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
+
+                var xml = await Fetch.GetAsync(
+                    $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
+                );
+
+                XElement xmlTree = XElement.Parse(xml);
+                var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
+                var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
+                var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
+                var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
+
+                var cats = categories
+                    .Elements()
+                    .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+
+                var filteredCategories = cats
+                    .Where(c =>
+                        {
+                            string lower = c.ToLower();
+                            return lower.Contains("japan") &&
+                                    !lower.Contains("articles") &&
+                                    !lower.Contains("cs1") &&
+                                    !lower.Contains("use") &&
+                                    !lower.Contains("using") &&
+                                    !lower.Contains("ambiguation") &&
+                                    !lower.Contains("wikidata");
+                        }
+                    )
+                    .OrderByDescending(c =>
+                    {
+                        var categoryCount = categoriesCount
+                                                .FirstOrDefault(cc => cc.category == c);
+                        if (categoryCount == null)
+                        {
+                            return 0;
+                        }
+                        return categoryCount.count;
+                    });
+
+                var categoryWithoutNumber = filteredCategories
+                                            .FirstOrDefault(c => !c.Contains("0") &&
+                                                                !c.Contains("1") &&
+                                                                !c.Contains("2") &&
+                                                                !c.Contains("3") &&
+                                                                !c.Contains("4") &&
+                                                                !c.Contains("5") &&
+                                                                !c.Contains("6") &&
+                                                                !c.Contains("7") &&
+                                                                !c.Contains("8") &&
+                                                                !c.Contains("9"));
+
+                if (categoryWithoutNumber != null)
+                {
+                    // 数値を含まないものがあれば、そちらを優先
+                    return categoryWithoutNumber;
+                }
+                return filteredCategories.FirstOrDefault();
             }
-            return filteredCategories.FirstOrDefault();
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Error occurred in GetCategory method:" + ex.Message
+                );
+            }
         }
 
         public class CategoryCount
@@ -224,18 +272,27 @@ namespace Z_Apps.wrBatch
         }
         private static IEnumerable<CategoryCount> GetCategoriesCount()
         {
-            return new DBCon(DBCon.DBType.wiki_db)
-                    .ExecuteSelect(@"
+            try
+            {
+                return new DBCon(DBCon.DBType.wiki_db)
+                        .ExecuteSelect(@"
 select category, count(word) as cnt
 from pajWords
 group by category
 order by cnt desc;"
-                    )
-                    .Select(r => new CategoryCount()
-                    {
-                        category = (string)r["category"],
-                        count = (int)r["cnt"]
-                    });
+                        )
+                        .Select(r => new CategoryCount()
+                        {
+                            category = (string)r["category"],
+                            count = (int)r["cnt"]
+                        });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An exception occurred in GetCategoriesCount method: " + ex.Message
+                );
+            }
         }
 
         private static IEnumerable<string> GetWordsToRegister()
@@ -293,13 +350,22 @@ where cacheKey = N'WikiPages'
 
         private static IEnumerable<string> GetAlreadyFinishedWords()
         {
-            return new DBCon(DBCon.DBType.wiki_db)
-                    .ExecuteSelect(
-                        " select word from pajWords;"
-                        , null,
-                        60 * 60 * 6 // タイムアウト６時間
-                    )
-                    .Select(r => (string)r["word"]);
+            try
+            {
+                return new DBCon(DBCon.DBType.wiki_db)
+                        .ExecuteSelect(
+                            " select word from pajWords;"
+                            , null,
+                            60 * 60 * 6 // タイムアウト６時間
+                        )
+                        .Select(r => (string)r["word"]);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "An exception occurred in GetAlreadyFinishedWords method: " + ex.Message
+                );
+            }
         }
     }
 
