@@ -144,7 +144,7 @@ public class WikiService
                 var xml = "";
                 try
                 {
-                    xml = await GetFurigana(word);
+                    xml = GetFurigana(word);
                 }
                 catch (Exception ex)
                 {
@@ -246,9 +246,22 @@ public class WikiService
         }
     }
 
-    public async Task<string> GetFurigana(string encodedWord)
+
+    public string GetFurigana(string encodedWord)
     {
-        var jsonString = await Fetch.GetAsync($"{Consts.ARTICLES_URL}/api/japaneseDictionary/yahooFuriganaV1?word={encodedWord}");
+        var jsonString = Fetch.PostAsync(
+                $"{Consts.ARTICLES_URL}/api/japaneseDictionary/yahooFuriganaV1",
+                new Dictionary<string, string>() {
+                        {"word", encodedWord},
+                        {"yahooAppId", PrivateConsts.YAHOO_API_ID}
+                }
+            );
+
+        if (jsonString == "")
+        {
+            throw new Exception($"Error occurred when sending POST request to next.js furigana api.");
+        }
+
         var nextResult = JsonSerializer.Deserialize<NextResult>(jsonString);
 
         if (nextResult.responseType == "success")
@@ -272,8 +285,8 @@ public class WikiService
         // Apps Script:
         // https://script.google.com/home/projects/1ibWrQwdxAHyvEtKbxvuU8OztGlGCumDb6VmEc59nkJ_prajItLPayLxx/edit
 
-        string url = @"https://script.google.com/macros/s/AKfycbzybNyMvQkLkgzgtxOE-8Js7dTBnECkj4uN7Q2vDMMPbXMkEoCd5grxM9RTiPstgttMIw/exec?text="
-            + kanji + @"&source=ja&target=en";
+        string url = "https://script.google.com/macros/s/AKfycbzybNyMvQkLkgzgtxOE-8Js7dTBnECkj4uN7Q2vDMMPbXMkEoCd5grxM9RTiPstgttMIw/exec?text="
+            + kanji + "&source=ja&target=en";
 
         using (var client = new HttpClient())
         {
