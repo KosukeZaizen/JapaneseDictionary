@@ -260,7 +260,8 @@ namespace Z_Apps.wrBatch
             catch (Exception ex)
             {
                 throw new Exception(
-                    "Error occurred in GetCategory method:" + ex.Message
+                    "Error occurred in GetCategory method:" + ex.Message +
+                    " StackTrace: " + ex.StackTrace
                 );
             }
         }
