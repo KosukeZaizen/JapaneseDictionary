@@ -28,7 +28,7 @@ namespace Z_Apps.wrBatch
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("Error occurred in GetWordsToRegister method: " + ex.Message);
+                        throw new Exception("Error occurred in GetWordsToRegister method: " + ex);
                     }
 
                     foreach (var word in wordsToRegister)
@@ -39,7 +39,7 @@ namespace Z_Apps.wrBatch
                         }
                         catch (Exception ex)
                         {
-                            ErrorLog.InsertErrorLog("Error occurred in RegisterRelatedPages method: " + ex.Message);
+                            ErrorLog.InsertErrorLog("Error occurred in RegisterRelatedPages method: " + ex);
                             await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
                         await Task.Delay(1000 * 60);
@@ -48,7 +48,7 @@ namespace Z_Apps.wrBatch
                 catch (Exception ex)
                 {
                     ErrorLog.InsertErrorLog(
-                        "Exception occurred in setPagesData method: " + ex.Message
+                        "Exception occurred in setPagesData method: " + ex
                     );
                 }
                 await Task.Delay(1000 * 60 * 60 * 24); // １日待機（wordsToRegisterの状況が変わるまで時間がかかるため）
@@ -57,91 +57,82 @@ namespace Z_Apps.wrBatch
 
         private static async Task RegisterRelatedPages(string word)
         {
-            try
+            // Wikipedia APIからカテゴリの取得
+            var category = await GetCategory(word);
+            if (string.IsNullOrEmpty(category))
             {
-                // Wikipedia APIからカテゴリの取得
-                var category = await GetCategory(word);
-                if (string.IsNullOrEmpty(category))
-                {
-                    return;
-                }
+                return;
+            }
 
-                // Google APIから関連サイトの取得
-                var googleResultItems = (await GetGoogleResult(word)).items;
-                if (googleResultItems == null || googleResultItems.Count() <= 5)
-                {
-                    return;
-                }
+            // Google APIから関連サイトの取得
+            var googleResultItems = (await GetGoogleResult(word)).items;
+            if (googleResultItems == null || googleResultItems.Count() <= 5)
+            {
+                return;
+            }
 
-                // トランザクションを張り、データの登録
-                new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
+            // トランザクションを張り、データの登録
+            new DBCon(DBCon.DBType.wiki_db).UseTransaction(execUpdate =>
+                {
+                    try
                     {
-                        try
-                        {
-                            // 単語の削除・登録
-                            execUpdate(
-                                    "delete from pajWords where word = @word;",
-                                    new Dictionary<string, object[]> {
+                        // 単語の削除・登録
+                        execUpdate(
+                            "delete from pajWords where word = @word;",
+                            new Dictionary<string, object[]> {
                                 { "@word", new object[2] { SqlDbType.NVarChar, word } },
-                                    }
-                                );
-                            var wordResultCount = execUpdate(
-                                @"insert into pajWords(word,category)
+                            }
+                        );
+                        var wordResultCount = execUpdate(
+                            @"insert into pajWords(word,category)
                             values (@word,@category);",
-                                new Dictionary<string, object[]> {
+                            new Dictionary<string, object[]> {
                                 { "@word", new object[2] { SqlDbType.NVarChar, word } },
                                 { "@category", new object[2] { SqlDbType.NVarChar, category } },
-                                }
-                            );
-                            if (wordResultCount != 1)
-                            {
-                                return false;
                             }
+                        );
+                        if (wordResultCount != 1)
+                        {
+                            return false;
+                        }
 
-                            // 単語に対するGoogle検索結果の削除・登録
-                            execUpdate(
-                                    "delete from pajRelatedPages where relatedWord = @relatedWord;",
-                                    new Dictionary<string, object[]> {
+                        // 単語に対するGoogle検索結果の削除・登録
+                        execUpdate(
+                            "delete from pajRelatedPages where relatedWord = @relatedWord;",
+                            new Dictionary<string, object[]> {
                                 { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } },
-                                    }
-                                );
-                            foreach (var article in googleResultItems)
-                            {
-                                var pageResultCount = execUpdate(
-                                    @"insert into pajRelatedPages(pageName,relatedWord,link,explanation)
+                            }
+                        );
+                        foreach (var article in googleResultItems)
+                        {
+                            var pageResultCount = execUpdate(
+                                @"insert into pajRelatedPages(pageName,relatedWord,link,explanation)
                                 values (@pageName,@relatedWord,@link,@explanation);",
-                                    new Dictionary<string, object[]> {
+                                new Dictionary<string, object[]> {
                                     { "@pageName", new object[2] { SqlDbType.NVarChar, article.title } },
                                     { "@relatedWord", new object[2] { SqlDbType.NVarChar, word } },
                                     { "@link", new object[2] { SqlDbType.NVarChar, article.link } },
                                     { "@explanation", new object[2] { SqlDbType.NVarChar, article.snippet } },
-                                    }
-                                );
-                                if (pageResultCount != 1)
-                                {
-                                    return false;
                                 }
-                            }
-
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            ErrorLog.InsertErrorLog(
-                                "Error occurred in the DB transation: " + ex.Message
                             );
-                            return false;
+                            if (pageResultCount != 1)
+                            {
+                                return false;
+                            }
                         }
-                    },
-                    60 * 60 // トランザクションのタイムアウト１時間
-                );
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    "Exception occurred in RegisterRelatedPages method: " + ex.Message
-                );
-            }
+
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLog.InsertErrorLog(
+                            "Error occurred in the DB transation: " + ex
+                        );
+                        return false;
+                    }
+                },
+                60 * 60 // トランザクションのタイムアウト１時間
+            );
         }
 
         private static async Task<GoogleResult> GetGoogleResult(string word)
@@ -159,7 +150,7 @@ namespace Z_Apps.wrBatch
             catch (Exception ex)
             {
                 throw new Exception(
-                    "Error occurred in GetGoogleResult method:" + ex.Message
+                    "Error occurred in GetGoogleResult method:" + ex
                 );
             }
         }
@@ -186,84 +177,74 @@ namespace Z_Apps.wrBatch
             catch (Exception ex)
             {
                 throw new Exception(
-                    "Exception occurred in GetGoogleUrlWithParam method: " + ex.Message
+                    "Exception occurred in GetGoogleUrlWithParam method: " + ex
                 );
             }
         }
 
         private static async Task<string> GetCategory(string word)
         {
-            try
-            {
-                var categoriesCount = GetCategoriesCount();
+            var categoriesCount = GetCategoriesCount();
 
-                var encodedWord = HttpUtility
-                            .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
+            var encodedWord = HttpUtility
+                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
 
-                var xml = await Fetch.GetAsync(
-                    $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
-                );
+            var xml = await Fetch.GetAsync(
+                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
+            );
 
-                XElement xmlTree = XElement.Parse(xml);
-                var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
-                var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
-                var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
-                var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
+            XElement xmlTree = XElement.Parse(xml);
+            var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
+            var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
+            var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
+            var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
 
-                var cats = categories
-                    .Elements()
-                    .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+            var cats = categories
+                .Elements()
+                .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
 
-                var filteredCategories = cats
-                    .Where(c =>
-                        {
-                            string lower = c.ToLower();
-                            return lower.Contains("japan") &&
-                                    !lower.Contains("articles") &&
-                                    !lower.Contains("cs1") &&
-                                    !lower.Contains("use") &&
-                                    !lower.Contains("using") &&
-                                    !lower.Contains("ambiguation") &&
-                                    !lower.Contains("wikidata");
-                        }
-                    )
-                    .OrderByDescending(c =>
+            var filteredCategories = cats
+                .Where(c =>
                     {
-                        var categoryCount = categoriesCount
-                                                .FirstOrDefault(cc => cc.category == c);
-                        if (categoryCount == null)
-                        {
-                            return 0;
-                        }
-                        return categoryCount.count;
-                    });
-
-                var categoryWithoutNumber = filteredCategories
-                                            .FirstOrDefault(c => !c.Contains("0") &&
-                                                                !c.Contains("1") &&
-                                                                !c.Contains("2") &&
-                                                                !c.Contains("3") &&
-                                                                !c.Contains("4") &&
-                                                                !c.Contains("5") &&
-                                                                !c.Contains("6") &&
-                                                                !c.Contains("7") &&
-                                                                !c.Contains("8") &&
-                                                                !c.Contains("9"));
-
-                if (categoryWithoutNumber != null)
+                        string lower = c.ToLower();
+                        return lower.Contains("japan") &&
+                                !lower.Contains("articles") &&
+                                !lower.Contains("cs1") &&
+                                !lower.Contains("use") &&
+                                !lower.Contains("using") &&
+                                !lower.Contains("ambiguation") &&
+                                !lower.Contains("wikidata");
+                    }
+                )
+                .OrderByDescending(c =>
                 {
-                    // 数値を含まないものがあれば、そちらを優先
-                    return categoryWithoutNumber;
-                }
-                return filteredCategories.FirstOrDefault();
-            }
-            catch (Exception ex)
+                    var categoryCount = categoriesCount
+                                            .FirstOrDefault(cc => cc.category == c);
+                    if (categoryCount == null)
+                    {
+                        return 0;
+                    }
+                    return categoryCount.count;
+                });
+
+            var categoryWithoutNumber = filteredCategories
+                                        .FirstOrDefault(c => !c.Contains("0") &&
+                                                            !c.Contains("1") &&
+                                                            !c.Contains("2") &&
+                                                            !c.Contains("3") &&
+                                                            !c.Contains("4") &&
+                                                            !c.Contains("5") &&
+                                                            !c.Contains("6") &&
+                                                            !c.Contains("7") &&
+                                                            !c.Contains("8") &&
+                                                            !c.Contains("9"));
+
+            if (categoryWithoutNumber != null)
             {
-                throw new Exception(
-                    "Error occurred in GetCategory method:" + ex.Message +
-                    " StackTrace: " + ex.StackTrace
-                );
+                // 数値を含まないものがあれば、そちらを優先
+                return categoryWithoutNumber;
             }
+            return filteredCategories.FirstOrDefault();
         }
 
         public class CategoryCount
@@ -291,7 +272,7 @@ order by cnt desc;"
             catch (Exception ex)
             {
                 throw new Exception(
-                    "An exception occurred in GetCategoriesCount method: " + ex.Message
+                    "An exception occurred in GetCategoriesCount method: " + ex
                 );
             }
         }
@@ -344,7 +325,7 @@ where cacheKey = N'WikiPages'
             }
             catch (Exception ex)
             {
-                ErrorLog.InsertErrorLog(ex.Message);
+                ErrorLog.InsertErrorLog(ex.ToString());
             }
             return null;
         }
@@ -364,7 +345,7 @@ where cacheKey = N'WikiPages'
             catch (Exception ex)
             {
                 throw new Exception(
-                    "An exception occurred in GetAlreadyFinishedWords method: " + ex.Message
+                    "An exception occurred in GetAlreadyFinishedWords method: " + ex
                 );
             }
         }
