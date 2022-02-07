@@ -182,28 +182,24 @@ namespace Z_Apps.wrBatch
             }
         }
 
-        private static async Task<string> GetCategory(string word)
+
+        private static IEnumerable<string> GetCategoriesFromXML(string xml)
         {
-            var categoriesCount = GetCategoriesCount();
-
-            var encodedWord = HttpUtility
-                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
-
-            var xml = await Fetch.GetAsync(
-                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
-            );
-
             XElement xmlTree = XElement.Parse(xml);
             var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
             var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
             var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
             var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
 
-            var cats = categories
+            return categories
                 .Elements()
                 .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+        }
 
-            var filteredCategories = cats
+        private static IEnumerable<string> FilterCategories(
+    IEnumerable<string> categories, IEnumerable<CategoryCount> categoriesCount)
+        {
+            return categories
                 .Where(c =>
                     {
                         string lower = c.ToLower();
@@ -226,18 +222,39 @@ namespace Z_Apps.wrBatch
                     }
                     return categoryCount.count;
                 });
+        }
 
-            var categoryWithoutNumber = filteredCategories
-                                        .FirstOrDefault(c => !c.Contains("0") &&
-                                                            !c.Contains("1") &&
-                                                            !c.Contains("2") &&
-                                                            !c.Contains("3") &&
-                                                            !c.Contains("4") &&
-                                                            !c.Contains("5") &&
-                                                            !c.Contains("6") &&
-                                                            !c.Contains("7") &&
-                                                            !c.Contains("8") &&
-                                                            !c.Contains("9"));
+        private static string RemoveNumber(
+            IEnumerable<string> filteredCategories)
+        {
+            return filteredCategories.FirstOrDefault(c => !c.Contains("0") &&
+                        !c.Contains("1") &&
+                        !c.Contains("2") &&
+                        !c.Contains("3") &&
+                        !c.Contains("4") &&
+                        !c.Contains("5") &&
+                        !c.Contains("6") &&
+                        !c.Contains("7") &&
+                        !c.Contains("8") &&
+                        !c.Contains("9"));
+        }
+
+        private static async Task<string> GetCategory(string word)
+        {
+            var categoriesCount = GetCategoriesCount();
+
+            var encodedWord = HttpUtility
+                        .UrlEncode(word, Encoding.GetEncoding("UTF-8"));
+
+            var xml = await Fetch.GetAsync(
+                $"https://en.wikipedia.org/w/api.php?format=xml&action=query&prop=categories&titles={encodedWord}"
+            );
+
+            var categories = GetCategoriesFromXML(xml);
+
+            var filteredCategories = FilterCategories(categories, categoriesCount);
+
+            var categoryWithoutNumber = RemoveNumber(filteredCategories);
 
             if (categoryWithoutNumber != null)
             {

@@ -91,7 +91,7 @@ public class WikiService
                     }
                     catch (Exception ex)
                     {
-                        ErrorLog.InsertErrorLog($"Exception occurred when fetching. URL:{targetUrl}, ErrorMessage:{ex.Message}");
+                        ErrorLog.InsertErrorLog($"Exception occurred when fetching. URL:{targetUrl}, Exception:{ex.ToString()}");
                         return null;
                     }
 
@@ -135,7 +135,7 @@ public class WikiService
                         }
                         catch (Exception ex)
                         {
-                            ErrorLog.InsertErrorLog($"Exception occurred when fetching google translation app. Word:{word}, ErrorMessage:{ex.Message}");
+                            ErrorLog.InsertErrorLog($"Exception occurred when fetching google translation app. Word:{word}, Exception:{ex.ToString()}");
                             return null;
                         }
                     }
@@ -148,13 +148,13 @@ public class WikiService
                 }
                 catch (Exception ex)
                 {
-                    ErrorLog.InsertErrorLog(ex.Message);
+                    ErrorLog.InsertErrorLog(ex.ToString());
                     return null;
                 }
 
                 if (xml == "")
                 {
-                    ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string.");
+                    ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string. Word:{word}");
                     return null;
                 }
 
@@ -173,7 +173,7 @@ public class WikiService
             }
             catch (Exception ex)
             {
-                ErrorLog.InsertErrorLog($"Exception occurred in getDictionaryDataWithoutCache. Target word:{word}, ErrorMessage:{ex.Message}");
+                ErrorLog.InsertErrorLog($"Exception occurred in getDictionaryDataWithoutCache. Target word:{word}, Exception:{ex.ToString()}");
             }
             return null;
         };
