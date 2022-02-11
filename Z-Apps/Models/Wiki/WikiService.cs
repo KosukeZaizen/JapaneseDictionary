@@ -152,13 +152,6 @@ public class WikiService
                     return null;
                 }
 
-                if (xml == "")
-                {
-                    ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string. Word:{word}");
-                    return null;
-                }
-
-
                 //受信したデータを表示する
                 return new DictionaryResult()
                 {
@@ -211,7 +204,18 @@ public class WikiService
             {
                 //通常時
                 obj = await getDictionaryDataWithoutCache();
-                json = JsonSerializer.Serialize(obj);
+                if (obj.xml == "")
+                {
+                    // Probably the Kanji is not valid Japanese.
+                    // Example: 庾亮, 李載佾
+                    ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string. Word:{word}");
+                    obj = new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
+                    json = "removed";
+                }
+                else
+                {
+                    json = JsonSerializer.Serialize(obj);
+                }
             }
 
             var task = Task.Run(async () =>
