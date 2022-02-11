@@ -294,14 +294,32 @@ public class WikiService
 
         using (var client = new HttpClient())
         {
-            var jsonString = await client.GetStringAsync(url);
-            GoogleResult googleResult =
-                JsonSerializer.Deserialize<GoogleResult>(jsonString);
-            if (googleResult.code == 200)
+            string jsonString = null;
+            try
+            {
+                jsonString = await client.GetStringAsync(url);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An exception occurred when executing GetStringAsync. URL:${url}, Exception:${ex.ToString()}");
+            }
+
+            GoogleResult googleResult = null;
+            try
+            {
+                googleResult =
+                    JsonSerializer.Deserialize<GoogleResult>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An exception occurred when deserializing. JsonString:${jsonString}, Exception:${ex.ToString()}");
+            }
+
+            if (googleResult?.code == 200)
             {
                 return googleResult.text;
             }
-            throw new Exception("Result code from Google Translate App is not 200");
+            throw new Exception("Result code from Google Translate App is not 200, or GoogleResult is null. GoogleResult:" + googleResult);
         }
     }
     private class GoogleResult
