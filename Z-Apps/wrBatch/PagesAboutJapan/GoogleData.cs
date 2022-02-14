@@ -185,15 +185,30 @@ namespace Z_Apps.wrBatch
 
         private static IEnumerable<string> GetCategoriesFromXML(string xml)
         {
-            XElement xmlTree = XElement.Parse(xml);
-            var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
-            var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
-            var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
-            var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
+            XElement xmlTree = null;
+            try
+            {
+                xmlTree = XElement.Parse(xml);
+                var query = xmlTree.Elements().FirstOrDefault(e => e.Name == "query");
+                var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
+                var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
+                var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
 
-            return categories
-                .Elements()
-                .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+                return categories
+                    .Elements()
+                    .Select(c => c.Attribute("title").Value.Replace("Category:", ""));
+            }
+            catch (Exception ex)
+            {
+                if (xmlTree == null)
+                {
+                    throw new Exception($"XML:{xml}, xmlTree:{xmlTree}, {ex.ToString()}");
+                }
+                else
+                {
+                    throw new Exception($"XML:{xml}, xmlTree:{xmlTree}, xmlTree.Elements():{xmlTree.Elements()}, Exception:{ex.ToString()}");
+                }
+            }
         }
 
         private static IEnumerable<string> FilterCategories(
