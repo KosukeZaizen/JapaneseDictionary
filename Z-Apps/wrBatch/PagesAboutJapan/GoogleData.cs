@@ -39,7 +39,7 @@ namespace Z_Apps.wrBatch
                         }
                         catch (Exception ex)
                         {
-                            ErrorLog.InsertErrorLog("Error occurred in RegisterRelatedPages method: " + ex);
+                            ErrorLog.InsertErrorLog($"Error occurred in RegisterRelatedPages method. Word:{word}, Exception{ex}");
                             await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
                         await Task.Delay(1000 * 60);

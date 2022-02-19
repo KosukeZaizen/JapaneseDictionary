@@ -98,7 +98,14 @@ public class WikiService
                     var serializer = new DataContractJsonSerializer(typeof(Data));
                     using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
                     {
-                        w = (Data)serializer.ReadObject(ms);
+                        try
+                        {
+                            w = (Data)serializer.ReadObject(ms);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"An exception occurred in (Data)serializer.ReadObject(ms). Word:{word}, Exception{ex}");
+                        }
 
                         if (w == null || w.wordId == null)
                         {
