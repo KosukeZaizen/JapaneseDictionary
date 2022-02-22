@@ -5,6 +5,7 @@ interface WikiLog {
     term: string;
     startTime: string;
     endTime: string;
+    message: string | null;
 }
 
 const tdStyle = { border: "solid", padding: 5 };
@@ -36,6 +37,7 @@ export default function WikiLog() {
                         <th style={thStyle}>term</th>
                         <th style={thStyle}>startTime</th>
                         <th style={thStyle}>endTime</th>
+                        <th style={thStyle}>message</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,6 +53,7 @@ export default function WikiLog() {
                             </td>
                             <td style={tdStyle}>{log.startTime}</td>
                             <td style={tdStyle}>{log.endTime}</td>
+                            <td style={tdStyle}>{log.message}</td>
                         </tr>
                     ))}
                 </tbody>

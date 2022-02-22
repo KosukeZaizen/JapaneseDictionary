@@ -16,6 +16,7 @@ namespace Z_Apps.Controllers
             public string term { get; set; }
             public string startTime { get; set; }
             public string endTime { get; set; }
+            public string message { get; set; }
         }
 
         [HttpGet("[action]")]
@@ -27,7 +28,8 @@ SELECT
     procType,
     term,
     CONVERT(VARCHAR, startTime, 120) as startTime,
-    CONVERT(VARCHAR, endTime, 120) as endTime
+    CONVERT(VARCHAR, endTime, 120) as endTime,
+    message
 FROM LastTopUpdate;
             ";
 
@@ -39,6 +41,7 @@ FROM LastTopUpdate;
                 term = (string)r["term"],
                 startTime = (string)r["startTime"],
                 endTime = (string)r["endTime"],
+                message = (string)r["message"],
             });
 
             return result;
