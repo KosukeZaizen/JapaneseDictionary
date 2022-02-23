@@ -39,7 +39,7 @@ namespace Z_Apps.wrBatch
                         }
                         catch (Exception ex)
                         {
-                            ErrorLog.InsertErrorLog($"Error occurred in RegisterRelatedPages method. Word:{word}, Exception{ex}");
+                            ErrorLog.InsertErrorLog($"Error occurred in RegisterRelatedPages method. Word:{word}, Exception:{ex}");
                             await Task.Delay(1000 * 60 * 10); // 10分待機
                         }
                         await Task.Delay(1000 * 60);
@@ -193,6 +193,12 @@ namespace Z_Apps.wrBatch
                 var pages = query.Elements().FirstOrDefault(e => e.Name == "pages");
                 var page = pages.Elements().FirstOrDefault(e => e.Name == "page");
                 var categories = page.Elements().FirstOrDefault(e => e.Name == "categories");
+
+                if (categories == null)
+                {
+                    // no category
+                    return new string[] { };
+                }
 
                 return categories
                     .Elements()

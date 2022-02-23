@@ -107,7 +107,7 @@ public class WikiService
                             throw new Exception($"An exception occurred in (Data)serializer.ReadObject(ms). Word:{word}, Exception{ex}");
                         }
 
-                        if (w == null || w.wordId == null)
+                        if (w == null || w.wordId == null || w.snippet == null)
                         {
                             return new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
                         }
@@ -214,7 +214,8 @@ public class WikiService
                 if (obj.xml == "")
                 {
                     // Probably the Kanji is not valid Japanese.
-                    // Example: 庾亮, 李載佾
+                    //   Example: 庾亮, 李載佾
+                    // Or the snippet is null.
                     ErrorLog.InsertErrorLog($"XML from next.js furigana api is an empty string. Word:{word}");
                     obj = new DictionaryResult() { xml = "", translatedWord = "", wordId = 0, snippet = "" };
                     json = "removed";
