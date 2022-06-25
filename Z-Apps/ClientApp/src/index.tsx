@@ -13,7 +13,6 @@ import { checkAppVersion } from "./common/functions";
 import { GOOGLE_ANALYTICS } from "./common/privateConsts";
 import { appToMount as JapaneseDictionary } from "./JapaneseDictionary";
 import { appToMount as LocalDebugMenu } from "./LocalDebug";
-import { appToMount as PagesAboutJapan } from "./PagesAboutJapan";
 //import registerServiceWorker from './registerServiceWorker';
 import { unregister } from "./registerServiceWorker";
 import configureStore from "./store/configureStore";
@@ -55,7 +54,7 @@ export interface AppToMount {
 // アプリ追加時は、この配列に追加
 export const apps: AppToMount[] = [
     JapaneseDictionary,
-    PagesAboutJapan,
+    // PagesAboutJapan,
     Admin,
     LocalDebugMenu,
 ];

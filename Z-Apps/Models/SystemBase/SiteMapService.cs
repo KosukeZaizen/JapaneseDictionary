@@ -47,10 +47,10 @@ namespace Z_Apps.Models.SystemBase
                 {
                     lstSitemap = GetJapaneseDictionarySitemap();
                 }
-                else if (url == "japan.lingual-ninja.com")
-                {
-                    lstSitemap = GetPagesAboutJapanSitemap();
-                }
+                //else if (url == "japan.lingual-ninja.com")
+                //{
+                //    lstSitemap = GetPagesAboutJapanSitemap();
+                //}
                 else if (url == "localhost")
                 {
                     // ローカルでのデバッグ時

@@ -19,11 +19,11 @@ namespace Z_Apps.Models.SystemBase
                 Title = "Japanese Dictionary",
                 Description ="Free website to learn the meaning of Japanese words! You can learn a lot of Japanese words!",
             },
-            new AppInfo(){
-                Key = "japan",
-                Title = "Pages about Japan",
-                Description ="Website to introduce articles about Japan. You can learn about Japan with many topics.",
-            },
+            //new AppInfo(){
+            //    Key = "japan",
+            //    Title = "Pages about Japan",
+            //    Description ="Website to introduce articles about Japan. You can learn about Japan with many topics.",
+            //},
             new AppInfo(){
                 Key = "admin",
                 Title = "Admin page",

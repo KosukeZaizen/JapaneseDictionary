@@ -22,18 +22,21 @@ namespace Z_Apps.wrBatch
 
         public static async void setSitemapCount()
         {
-            await setEachSitemap(
-                "en",
-                "https://wiki.lingual-ninja.com",
-                "RelatedArticlesCache"
-            );
+            // 廃止
+            //await setEachSitemap(
+            //    "en",
+            //    "https://wiki.lingual-ninja.com",
+            //    "RelatedArticlesCache"
+            //);
+
             await setEachSitemap(
                 "ja",
                 "https://wiki-jp.lingual-ninja.com",
                 "RelatedArticlesCacheJp"
             );
 
-            setPagesAboutJapanSitemap();
+            // 廃止
+            //setPagesAboutJapanSitemap();
 
             counts = counts
                         .OrderByDescending(c => c.time)
