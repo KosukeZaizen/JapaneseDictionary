@@ -21,11 +21,6 @@ namespace Z_Apps.wrBatch
                 1000 * 60 * 60 * 24, // 毎日実行
                 1000 * 60 * 60 * 5 //デプロイ後５時間待機
             );
-
-            // Pages about Japanのページ取得バッチ
-            // 内部で無限ループするため、startBat関数は用いない。
-            // 内部のループで、15分に１回実行（Custom Search APIの上限が１日１００クエリのため）
-            Task.Run(GoogleData.setPagesData);
 #endif
 
             //----------------------------------------------------
