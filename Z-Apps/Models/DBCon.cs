@@ -18,7 +18,7 @@ namespace Z_Apps.Models
         {
             if (type == DBType.wiki_db)
             {
-                connectionString = PrivateConsts.CONNECTION_STRING_WIKI;
+                connectionString = PrivateConsts.CONNECTION_STRING;
             }
             else
             {

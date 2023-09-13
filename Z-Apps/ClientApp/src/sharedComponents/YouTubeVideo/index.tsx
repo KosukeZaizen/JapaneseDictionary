@@ -1,6 +1,5 @@
 import React, { CSSProperties } from "react";
 import Button from "reactstrap/lib/Button";
-import { sendClientOpeLog } from "../../common/functions";
 import { getHoverClassName } from "../../common/util/getHoverClass";
 
 const buttonHover = getHoverClassName({
@@ -56,14 +55,6 @@ export function YouTubeVideo({
                     href="http://www.youtube.com/channel/UCii35PcojqMUNkSRalUw35g?sub_confirmation=1"
                     target="_blank"
                     rel="noopener noreferrer nofollow"
-                    onClick={() => {
-                        setTimeout(() => {
-                            sendClientOpeLog(
-                                "click YouTube channel",
-                                `from ${pageNameForLog} video bottom`
-                            );
-                        }, 1000);
-                    }}
                 >
                     <Button
                         style={{

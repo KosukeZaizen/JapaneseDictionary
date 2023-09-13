@@ -53,42 +53,38 @@ export async function sendPostNoJsonResultWithoutAwait(
     fetch(url, { method, headers, body });
 }
 
-export function sendClientOpeLog(
-    operationName: string,
-    parameters: string = ""
-) {
-    const saveKey = "userId";
-    const item = window.localStorage.getItem(saveKey);
-    let userId = item && JSON.parse(item);
+// export function sendClientOpeLog(
+//     operationName: string,
+//     parameters: string = ""
+// ) {
+//     const saveKey = "userId";
+//     const item = window.localStorage.getItem(saveKey);
+//     let userId = item && JSON.parse(item);
 
-    if (!userId) {
-        const nowDate = new Date();
-        const rand = Math.floor(Math.random() * 10000);
+//     if (!userId) {
+//         const nowDate = new Date();
+//         const rand = Math.floor(Math.random() * 10000);
 
-        userId = `${nowDate.getFullYear()}/${
-            nowDate.getMonth() + 1
-        }/${nowDate.getDate()}-${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}-${rand}`;
-        window.localStorage.setItem(saveKey, JSON.stringify(userId));
-    }
+//         userId = `${nowDate.getFullYear()}/${
+//             nowDate.getMonth() + 1
+//         }/${nowDate.getDate()}-${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}-${rand}`;
+//         window.localStorage.setItem(saveKey, JSON.stringify(userId));
+//     }
 
-    const log = {
-        url: window.location.href,
-        operationName,
-        userId,
-        parameters,
-    };
-    sendPostNoJsonResultWithoutAwait(log, "api/SystemBase/RegisterLog");
-}
+//     const log = {
+//         url: window.location.href,
+//         operationName,
+//         userId,
+//         parameters,
+//     };
+//     sendPostNoJsonResultWithoutAwait(log, "api/SystemBase/RegisterLog");
+// }
 
 export async function checkAppVersion() {
     const url = `api/SystemBase/GetVersion/V${new Date().getMilliseconds()}`;
     fetch(url).then(res => {
         res.json().then(v => {
             const userAgent = navigator.userAgent;
-            sendClientOpeLog(
-                `Came from ${document.referrer}`,
-                `ClientVersion:${APP_VERSION} ServerVersion:${v} UserAgent:${userAgent}`
-            );
             console.log("ClientVersion: " + APP_VERSION);
             console.log("ServerVersion: " + v);
 
@@ -102,6 +98,7 @@ export async function checkAppVersion() {
                         saveKey,
                         (errCount + 1).toString()
                     );
+                    // @ts-ignore
                     window.location.reload(true);
                 }
             }
@@ -122,12 +119,14 @@ export function reloadAndRedirect(saveKey: string) {
 
     if (intSavedTime && nowTime - intSavedTime < 15000) {
         if (nowTime - intSavedTime < 10000) {
+            // @ts-ignore
             window.location.reload(true);
         } else {
             window.location.href = `/not-found?p=${window.location.pathname}`;
         }
     } else {
         window.sessionStorage.setItem(saveKey, nowTime.toString());
+        // @ts-ignore
         window.location.reload(true);
     }
     return;
@@ -149,6 +148,7 @@ export function reloadAndRedirect_OneTimeReload(saveKey: string) {
         window.location.href = `/not-found?p=${window.location.pathname}`;
     } else {
         window.sessionStorage.setItem(saveKey, nowTime.toString());
+        // @ts-ignore
         window.location.reload(true);
     }
     return;

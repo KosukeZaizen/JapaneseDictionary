@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as consts from "../common/consts";
-import { sendClientOpeLog } from "../common/functions";
 
 type TFBProps = {
     style: React.CSSProperties;
@@ -21,11 +20,6 @@ export const FBShareBtn = (props: TFBProps) => {
                 }
                 alt="Share on Facebook"
                 style={style}
-                onClick={() => {
-                    setTimeout(() => {
-                        sendClientOpeLog("facebook share button");
-                    }, 1000);
-                }}
             />
         </a>
     );
@@ -51,11 +45,6 @@ export const TwitterShareBtn = (props: TTWProps) => {
                 }
                 alt="Share on Twitter"
                 style={style}
-                onClick={() => {
-                    setTimeout(() => {
-                        sendClientOpeLog("twitter share button");
-                    }, 1000);
-                }}
             />
         </a>
     );
